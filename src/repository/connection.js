@@ -5,7 +5,7 @@ import 'dotenv/config';
 export const con = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: root,
+    password: 'root',
     database: 'tcc'
 });
 

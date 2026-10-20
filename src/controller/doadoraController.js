@@ -230,7 +230,7 @@ endpoints.put('/api/doadoras/:id', autenticar, async (req, res) => {
     }
 });
 
-// DELETAR DOADORA
+
 endpoints.delete('/api/doadoras/:id', autenticar, async (req, res) => {
     try {
         const id = Number(req.params.id);

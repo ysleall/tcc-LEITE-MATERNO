@@ -5,7 +5,7 @@ import * as dbDoadora from '../repository/doadoraRepository.js';
 
 const endpoints = express.Router();
 
-// LOGIN DA DOADORA
+
 endpoints.post('/api/auth/login', async (req, res) => {
     try {
         const { email, senha } = req.body;

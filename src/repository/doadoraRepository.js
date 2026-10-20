@@ -1,3 +1,4 @@
+
 import { con } from './connection.js';
 
 // CADASTRAR DOADORA
@@ -48,10 +49,10 @@ export async function getDoadora(id) {
 // BUSCAR DOADORA PELO EMAIL PARA LOGIN
 export async function getDoadoraLogin(email) {
     const command = `
-        SELECT id, nome, email, cpf, telefone,
-               data_nascimento, senha
+        SELECT id, nome, email, senha
         FROM doadoras
         WHERE email = ?
+        LIMIT 1
     `;
 
     const [linhas] = await con.execute(command, [email]);
