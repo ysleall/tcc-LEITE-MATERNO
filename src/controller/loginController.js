@@ -5,6 +5,40 @@ import * as dbDoadora from '../repository/doadoraRepository.js';
 
 const endpoints = express.Router();
 
+// CADASTRO DA DOADORA
+endpoints.post('/api/auth/cadastro', async (req, res) => {
+    try {
+        const { nome, email, cpf, telefone, data_nascimento, senha } = req.body;
+
+        if (!nome || !email || !cpf || !telefone || !data_nascimento || !senha) {
+            return res.status(400).send({
+                mensagem: 'Preencha todos os campos obrigatórios.'
+            });
+        }
+
+        // Criptografa a senha antes de salvar no banco
+        const senhaHash = await bcrypt.hash(senha, 10);
+
+        const idInserido = await dbDoadora.saveDoadora({
+            nome,
+            email,
+            cpf,
+            telefone,
+            data_nascimento,
+            senha: senhaHash
+        });
+
+        return res.status(201).send({
+            mensagem: 'Doadora cadastrada com sucesso!',
+            id: idInserido
+        });
+    } catch (erro) {
+        console.error(erro);
+        return res.status(500).send({
+            mensagem: 'Erro ao cadastrar doadora.'
+        });
+    }
+});
 
 endpoints.post('/api/auth/login', async (req, res) => {
     try {
