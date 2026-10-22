@@ -1,13 +1,20 @@
+import dotenv from 'dotenv';
 import express from 'express';
-import { addRoutes } from './routes.js';
+import cors from 'cors';
+import routes, { addRoutes } from './routes.js';
 
-const api = express();
+dotenv.config();
 
-api.use(express.json());
+const app = express();
 
-addRoutes(api);
+app.use(cors());
+app.use(express.json());
 
-const PORT = 3000;
-api.listen(PORT, () => {
+addRoutes(app);
+
+
+const PORT = process.env.PORT || 50100;
+
+app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
