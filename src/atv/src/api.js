@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import routes from './routes.js';
+import routes from './routers.js';
 
 dotenv.config();
 
@@ -13,5 +13,5 @@ app.use(routes);
 
 const PORT = process.env.PORT || 50100;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
