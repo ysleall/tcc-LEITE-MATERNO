@@ -2,7 +2,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { addRoutes } from './router.js';
+import { addRoutes } from './routes.js';
 
 const api = express();
 
