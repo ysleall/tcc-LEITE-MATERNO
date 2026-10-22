@@ -1,9 +1,17 @@
-import  {Router} from "express";
+import { Router } from "express";
 const endpoints = Router();
 
-endpoints.get("/boas-vindas:<name>", (req, res) => {
-  res.status(200).json({ message: `Boas-vindas, ${req.params.name}!` });
-  let name = req.params.name;
-});
+
+
+endpoints.get('/boasvindas/:nome', (req, resp) => {
+  let nome = req.params.nome;
+
+  resp.send({
+    message: `Seja bem-vinda/o  ${nome} !`
+  })
+})
+
+
+
 
 export default endpoints;
