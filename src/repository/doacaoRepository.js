@@ -1,7 +1,7 @@
 import { con } from "./connection.js";
 
 
-// CADASTRO
+
 export async function saveDoacao(doacao) {
     const command = `
         insert into doacao
@@ -19,7 +19,6 @@ export async function saveDoacao(doacao) {
 }
 
 
-// LISTAR DOAÇÕES DE UMA DOADORA
 export async function listDoacoes(doadora_id) {
     const command = `
         select
@@ -38,7 +37,6 @@ export async function listDoacoes(doadora_id) {
 }
 
 
-// CONSULTAR RESUMO DO IMPACTO
 export async function getResumoImpacto(doadora_id) {
     const command = `
         select
@@ -54,7 +52,6 @@ export async function getResumoImpacto(doadora_id) {
 }
 
 
-// LISTAR DOAÇÕES POR MÊS
 export async function listDoacoesPorMes(doadora_id) {
     const command = `
         select
