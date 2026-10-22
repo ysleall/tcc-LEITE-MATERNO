@@ -1,0 +1,32 @@
+CREATE DATABASE IF NOT EXISTS banco;
+USE banco;
+
+
+CREATE TABLE IF NOT EXISTS doadoras (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    cpf VARCHAR(14) NOT NULL UNIQUE,
+    telefone VARCHAR(20),
+    data_nascimento DATE,
+    senha VARCHAR(255) NOT NULL,
+    data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS doacao (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    doadora_id INT NOT NULL,
+    quantidade_ml INT NOT NULL,
+    data_doacao DATETIME NOT NULL,
+    FOREIGN KEY (doadora_id) REFERENCES doadoras(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS quiz (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pergunta TEXT NOT NULL,
+    opcao_a VARCHAR(255) NOT NULL,
+    opcao_b VARCHAR(255) NOT NULL,
+    resposta_apta VARCHAR(1) NOT NULL
+);
