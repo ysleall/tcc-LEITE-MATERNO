@@ -17,7 +17,7 @@ api.get('/', (req, res) => {
     });
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 2026;
 
 api.listen(port, () => {
     console.log(`API iniciada na porta ${port}`);
