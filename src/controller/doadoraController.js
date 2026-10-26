@@ -5,7 +5,7 @@ import * as dbDoadora from '../repository/doadoraRepository.js';
 
 const endpoints = express.Router();
 
-// VERIFICAR TOKEN
+
 function autenticar(req, res, next) {
     const autorizacao = req.headers.authorization;
 
@@ -31,7 +31,7 @@ function autenticar(req, res, next) {
     }
 }
 
-// CADASTRAR DOADORA
+
 endpoints.post('/api/doadoras', async (req, res) => {
     try {
         const {
