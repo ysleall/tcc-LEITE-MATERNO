@@ -5,7 +5,7 @@ import * as dbDoadora from '../repository/doadoraRepository.js';
 
 const endpoints = express.Router();
 
-// CADASTRO DA DOADORA
+
 endpoints.post('/api/auth/cadastro', async (req, res) => {
     try {
         const { nome, email, cpf, telefone, data_nascimento, senha } = req.body;
@@ -16,7 +16,7 @@ endpoints.post('/api/auth/cadastro', async (req, res) => {
             });
         }
 
-        // Criptografa a senha antes de salvar no banco
+ 
         const senhaHash = await bcrypt.hash(senha, 10);
 
         const idInserido = await dbDoadora.saveDoadora({

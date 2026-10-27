@@ -5,6 +5,7 @@ import quizController from './controller/quizController.js';
 import doacaoController from './controller/doacaoController.js';
 import conquistaController from './controller/conquistaController.js';
 import gestaoController from './controller/gestaoController.js' ;
+import notificacaoController from './controller/notificacaoController.js';
 export function addRoutes(api) {
     api.use(doadoraController);
     api.use(loginController);
@@ -12,5 +13,5 @@ export function addRoutes(api) {
     api.use(doacaoController);
     api.use(conquistaController);
      api.use(gestaoController);
-}
+     api.use(notificacaoController);    }
 
