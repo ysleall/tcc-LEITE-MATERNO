@@ -7,9 +7,9 @@ export default function Home() {
   const [busca, setBusca] = useState('');
   const [filtroAtivo, setFiltroAtivo] = useState('Banco de Leite');
 
-  async function carregarBancos() {
+  async function buscarBancos(termoBusca = busca) {
     try {
-      const resposta = await axios.get(`http://localhost:5000/banco-leite?busca=${busca}`);
+      const resposta = await axios.get(`http://localhost:5000/banco-leite?busca=${termoBusca}`);
       setBancos(resposta.data);
     } catch (err) {
       console.error('Erro ao buscar bancos de leite:', err);
@@ -17,37 +17,32 @@ export default function Home() {
   }
 
   useEffect(() => {
-    carregarBancos();
+    async function carregarInicial() {
+      try {
+        const resposta = await axios.get('http://localhost:2026/banco-leite?busca=');
+        setBancos(resposta.data);
+      } catch (err) {
+        console.error('Erro ao carregar bancos de leite:', err);
+      }
+    }
+
+    carregarInicial();
   }, []);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      carregarBancos();
+      buscarBancos();
     }
   };
 
-  const handleTagClick = (tagNome) => {
-    setFiltroAtivo(tagNome);
+  const handleTagClick = (tag) => {
+    setFiltroAtivo(tag);
   };
 
   const handleContato = (telefone) => {
     if (telefone) {
-      alert(`Entrando em contato via telefone: ${telefone}`);
-    } else {
-      alert('Telefone de contato indisponível.');
+      window.open(`https://wa.me/55${telefone.replace(/\D/g, '')}`, '_blank');
     }
-  };
-
-  const handleDetalhes = (nome) => {
-    alert(`Exibindo detalhes de: ${nome}`);
-  };
-
-  const handleQueroDoar = () => {
-    alert('Redirecionando para o formulário de doação...');
-  };
-
-  const handleEntrar = () => {
-    alert('Redirecionando para a tela de login...');
   };
 
   return (
@@ -62,8 +57,8 @@ export default function Home() {
           <a href="#guias">Guia da Doadora</a>
         </nav>
         <div className="auth-buttons">
-          <button className="btn-secondary" onClick={handleEntrar}>Entrar</button>
-          <button className="btn-primary" onClick={handleQueroDoar}>Quero Doar</button>
+          <button className="btn-secondary" onClick={() => window.location.href = '/login'}>Entrar</button>
+          <button className="btn-primary" onClick={() => window.location.href = '/cadastro'}>Quero Doar</button>
         </div>
       </header>
 
@@ -78,7 +73,7 @@ export default function Home() {
               onChange={(e) => setBusca(e.target.value)}
               onKeyDown={handleKeyPress}
             />
-            <button className="btn-primary" onClick={carregarBancos}>Buscar</button>
+            <button className="btn-primary" onClick={() => buscarBancos()}>Buscar</button>
           </div>
           <div className="filter-tags">
             {['Banco de Leite', 'Posto de Coleta', 'Coleta Domiciliar', 'Aberto Agora'].map((tag) => (
@@ -113,7 +108,7 @@ export default function Home() {
                     <strong>Telefone:</strong> {item.telefone}
                   </p>
                   <div className="card-actions">
-                    <button className="btn-link" onClick={() => handleDetalhes(item.nome)}>Ver detalhes</button>
+                    <button className="btn-link" onClick={() => window.location.href = `/banco/${item.id}`}>Ver detalhes</button>
                     <button className="btn-primary" onClick={() => handleContato(item.telefone)}>Contato</button>
                   </div>
                 </div>
