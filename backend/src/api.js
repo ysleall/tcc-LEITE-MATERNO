@@ -1,10 +1,11 @@
-
+import axios from 'axios';
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import { addRoutes } from './routes.js';
+import addRoutes  from './routes.js';
 
 const api = express();
+
 
 api.use(cors());
 api.use(express.json());
@@ -17,8 +18,10 @@ api.get('/', (req, res) => {
     });
 });
 
-const port = process.env.PORT || 2026;
+const port = process.env.PORT || 5000;
 
 api.listen(port, () => {
     console.log(`API iniciada na porta ${port}`);
 });
+
+export default api;
