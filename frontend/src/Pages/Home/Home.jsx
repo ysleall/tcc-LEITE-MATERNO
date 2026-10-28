@@ -1,142 +1,291 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import './Home.scss';
+import logoImg from '../../assets/lacomaterno.png';
+import heroImg from '../../assets/amarmentar.png';
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 export default function Home() {
-  const [bancos, setBancos] = useState([]);
-  const [busca, setBusca] = useState('');
-  const [filtroAtivo, setFiltroAtivo] = useState('Banco de Leite');
+  const [cep, setCep] = useState('');
+  const campinasCoords = [-22.8932, -47.0543];
 
-  async function buscarBancos(termoBusca = busca) {
-    try {
-      const resposta = await axios.get(`http://localhost:5000/banco-leite?busca=${termoBusca}`);
-      setBancos(resposta.data);
-    } catch (err) {
-      console.error('Erro ao buscar bancos de leite:', err);
-    }
-  }
-
-  useEffect(() => {
-    async function carregarInicial() {
-      try {
-        const resposta = await axios.get('http://localhost:2026/banco-leite?busca=');
-        setBancos(resposta.data);
-      } catch (err) {
-        console.error('Erro ao carregar bancos de leite:', err);
-      }
-    }
-
-    carregarInicial();
-  }, []);
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      buscarBancos();
-    }
-  };
-
-  const handleTagClick = (tag) => {
-    setFiltroAtivo(tag);
-  };
-
-  const handleContato = (telefone) => {
-    if (telefone) {
-      window.open(`https://wa.me/55${telefone.replace(/\D/g, '')}`, '_blank');
-    }
+  const handleSearchCep = (e) => {
+    e.preventDefault();
   };
 
   return (
     <div className="home-container">
-      <header className="header">
-        <div className="logo">Laços Maternos</div>
-        <nav className="nav-links">
-          <a href="#inicio">Início</a>
+      <header className="home-header">
+        <div className="logo-container">
+          <img src={logoImg} alt="Laços Maternos" className="logo" />
+        </div>
+
+        <nav className="nav-menu">
+          <a href="#inicio" className="active">Início</a>
           <a href="#por-que-doar">Por que doar</a>
           <a href="#como-funciona">Como funciona</a>
-          <a href="#bancos-de-leite">Bancos de Leite</a>
-          <a href="#guias">Guia da Doadora</a>
+          <a href="#servicos">Serviços de Leite</a>
+          <a href="#guia">Guia da Doadora</a>
+          <a href="#campanhas">Campanhas</a>
         </nav>
-        <div className="auth-buttons">
-          <button className="btn-secondary" onClick={() => window.location.href = '/login'}>Entrar</button>
-          <button className="btn-primary" onClick={() => window.location.href = '/cadastro'}>Quero Doar</button>
+
+        <div className="header-actions">
+          <button className="btn-secondary">Entrar</button>
+          <button className="btn-primary">Quero Doar</button>
         </div>
       </header>
 
-      <main className="main-content">
-        <section className="search-section">
-          <h2>Encontre um Banco de Leite</h2>
-          <div className="search-bar">
-            <input 
-              type="text" 
-              placeholder="Digite a cidade ou endereço (ex: Campinas, SP)" 
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              onKeyDown={handleKeyPress}
-            />
-            <button className="btn-primary" onClick={() => buscarBancos()}>Buscar</button>
-          </div>
-          <div className="filter-tags">
-            {['Banco de Leite', 'Posto de Coleta', 'Coleta Domiciliar', 'Aberto Agora'].map((tag) => (
-              <button 
-                key={tag}
-                className={`tag ${filtroAtivo === tag ? 'active' : ''}`}
-                onClick={() => handleTagClick(tag)}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        </section>
+      <section className="hero-section" id="inicio">
+        <div className="hero-content">
+          <span className="tag-academic">PROJETO ACADÊMICO TCC</span>
+          <h1>
+            Seu leite pode criar <br />
+            novos laços e <br />
+            <span>transformar vidas.</span>
+          </h1>
+          <p>
+            Conectamos você aos Bancos de Leite Humano para tornar a doação mais simples, 
+            segura e acessível. Um pequeno gesto que salva vidas de bebês prematuros.
+          </p>
 
-        <section className="content-layout">
-          <div className="cards-list">
-            {bancos.length === 0 ? (
-              <p>Nenhum banco de leite encontrado.</p>
-            ) : (
-              bancos.map((item) => (
-                <div className="card" key={item.id}>
-                  <div className="card-header">
-                    <h3>{item.nome}</h3>
-                    <span className="badge-status">
-                      {item.abertoHoje ? 'Aberto hoje' : 'Fechado'}
-                    </span>
-                  </div>
-                  <p className="address">
-                    <strong>Endereço:</strong> {item.endereco}
-                  </p>
-                  <p className="phone">
-                    <strong>Telefone:</strong> {item.telefone}
-                  </p>
-                  <div className="card-actions">
-                    <button className="btn-link" onClick={() => window.location.href = `/banco/${item.id}`}>Ver detalhes</button>
-                    <button className="btn-primary" onClick={() => handleContato(item.telefone)}>Contato</button>
-                  </div>
-                </div>
-              ))
-            )}
+          <div className="hero-buttons">
+            <button className="btn-primary">Quero Doar</button>
+            <button className="btn-outline">Como funciona</button>
           </div>
 
-          <div className="map-container">
-            <div className="map-placeholder">
-              <p>Mapa Interativo</p>
+          <div className="hero-seal">
+            <span className="dot">•</span>
+            <span>Apoiando a Rede Brasileira de Bancos de Leite Humano (rBLH)</span>
+          </div>
+        </div>
+
+        <div className="hero-image-wrapper">
+          <div className="image-frame">
+            <img src={heroImg} alt="Mãe amamentando o bebê" />
+            <div className="badge badge-safe">
+              <span>💧 100% Seguro</span>
+              <small>Triagem rigorosa</small>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
-      <footer className="footer">
-        <div className="footer-content">
-          <div className="footer-brand">
-            <h3>Laços Maternos</h3>
-            <p>Uma ponte digital de solidariedade para apoiar mães doadoras.</p>
+      <section className="metrics-section">
+        <span className="section-subtitle">NOSSO IMPACTO SOCIAL</span>
+        <h2>Força coletiva para salvar vidas</h2>
+
+        <div className="metrics-grid">
+          <div className="metric-card">
+            <h3>+220</h3>
+            <h4>Bancos de Leite Humano</h4>
+            <p>Instalações oficiais espalhadas por todo o Brasil.</p>
           </div>
-          <div className="footer-links">
-            <h4>Plataforma</h4>
-            <ul>
-              <li><a href="#sobre">Sobre o Projeto</a></li>
-              <li><a href="#como-doar">Como doar</a></li>
-              <li><a href="#postos">Postos de Coleta</a></li>
-            </ul>
+
+          <div className="metric-card">
+            <h3>+240</h3>
+            <h4>Postos de Coleta</h4>
+            <p>Pontos estratégicos para facilitar a entrega de leite.</p>
+          </div>
+
+          <div className="metric-card">
+            <h3>Milhares</h3>
+            <h4>Recém-nascidos beneficiados</h4>
+            <p>Vidas de pequenos prematuros salvas todos os anos.</p>
+          </div>
+
+          <div className="metric-card highlight">
+            <h3>1 Gesto</h3>
+            <h4>Transforma Vidas</h4>
+            <p>Uma única doação alimenta diversos bebês internados.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="why-donate-section" id="por-que-doar">
+        <span className="section-subtitle">CONSCIÊNCIA E AMOR</span>
+        <h2>Por que doar leite materno?</h2>
+        <p className="section-desc">
+          A doação de leite humano é mais do que nutrição: é um ato de proteção essencial para a sobrevivência de recém-nascidos internados.
+        </p>
+
+        <div className="why-donate-grid">
+          <div className="why-card">
+            <div className="icon-wrapper pink">👶</div>
+            <h3>Para o bebê</h3>
+            <p>Contribui diretamente para o desenvolvimento e alimentação de recém-nascidos prematuros e de baixo peso em UTIs neonatais.</p>
+          </div>
+
+          <div className="why-card">
+            <div className="icon-wrapper purple">🩺</div>
+            <h3>Para a saúde</h3>
+            <p>O leite humano é um alimento vivo, repleto de anticorpos e componentes imunológicos essenciais para a proteção natural do bebê.</p>
+          </div>
+
+          <div className="why-card">
+            <div className="icon-wrapper green">🤝</div>
+            <h3>Para a sociedade</h3>
+            <p>Apenas 1 ml de leite materno já faz a diferença. Uma única doação pode amparar e alimentar diversos bebês vulneráveis.</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="how-it-works-section" id="como-funciona">
+        <span className="section-subtitle">PASSO A PASSO</span>
+        <h2>Como funciona a doação?</h2>
+        <p className="section-desc">Simplificamos o processo para que você se concentre apenas no amor que está compartilhando. Veja as etapas principais:</p>
+
+        <div className="steps-grid">
+          <div className="step-card">
+            <span className="step-number">01</span>
+            <h3>Cadastre-se</h3>
+            <p>Crie sua conta gratuitamente no Laços Maternos em poucos minutos.</p>
+          </div>
+
+          <div className="step-card">
+            <span className="step-number">02</span>
+            <h3>Pré-triagem</h3>
+            <p>Responda um questionário de saúde rápido baseado nos critérios oficiais.</p>
+          </div>
+
+          <div className="step-card">
+            <span className="step-number">03</span>
+            <h3>Escolha o Banco</h3>
+            <p>Localize o Banco de Leite Humano ou Posto de Coleta mais próximo.</p>
+          </div>
+
+          <div className="step-card">
+            <span className="step-number">04</span>
+            <h3>Agende a Coleta</h3>
+            <p>Defina o melhor horário. Diversos bancos oferecem busca domiciliar.</p>
+          </div>
+        </div>
+
+        <div className="info-box">
+          <span className="info-icon">ℹ️</span>
+          <p><strong>Nota importante:</strong> Todas as condições para doação devem ser avaliadas e confirmadas formalmente pelo Banco de Leite e pelos profissionais de saúde responsáveis, em conformidade com as diretrizes da Fiocruz e da ANVISA.</p>
+        </div>
+      </section>
+
+      <section className="locator-section" id="servicos">
+        <span className="section-subtitle">PROXIMIDADE</span>
+        <h2>Existe um Banco de Leite perto de você.</h2>
+
+        <div className="locator-container">
+          <div className="locator-search-panel">
+            <label htmlFor="cep-input">Digite seu CEP para localizar o ponto mais próximo:</label>
+            <form onSubmit={handleSearchCep} className="search-form">
+              <input 
+                id="cep-input"
+                type="text" 
+                placeholder="13012-100" 
+                value={cep}
+                onChange={(e) => setCep(e.target.value)}
+              />
+              <button type="submit" className="btn-search">Buscar</button>
+            </form>
+
+            <div className="location-card">
+              <div className="location-header">
+                <div>
+                  <h3>Banco de Leite Humano – Campinas</h3>
+                  <small>Maternidade de Campinas</small>
+                </div>
+                <span className="distance-badge">2.4 km</span>
+              </div>
+              <div className="status-tags">
+                <span className="tag-status open">ABERTO HOJE</span>
+                <span className="tag-service">Coleta domiciliar disponível</span>
+              </div>
+              <p className="address-info">
+                <strong>Horário:</strong> 08:00 às 17:00<br />
+                <strong>Endereço:</strong> Av. Orosimbo Maia, 165 - Vila Itapura, Campinas - SP
+              </p>
+              <div className="location-actions">
+                <button className="btn-outline-sm">Ver detalhes</button>
+                <button className="btn-primary-sm">Entrar em contato</button>
+              </div>
+            </div>
+          </div>
+
+          <div className="locator-map-realtime">
+            <MapContainer 
+              center={campinasCoords} 
+              zoom={14} 
+              scrollWheelZoom={false}
+              className="leaflet-map"
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={campinasCoords}>
+                <Popup>
+                  <strong>Banco de Leite Humano - Campinas</strong><br />
+                  Maternidade de Campinas<br />
+                  Aberto hoje (08:00 - 17:00)
+                </Popup>
+              </Marker>
+            </MapContainer>
+          </div>
+        </div>
+      </section>
+
+      <footer className="home-footer">
+        <div className="footer-top">
+          <div className="footer-brand">
+            <div className="logo-container">
+              <img src={logoImg} alt="Laços Maternos" className="logo" />
+            </div>
+            <p>Uma ponte digital de solidariedade para apoiar mães doadoras e proteger a vida de milhares de recém-nascidos brasileiros.</p>
+            <div className="social-icons">
+              <a href="#instagram">📷</a>
+              <a href="#facebook">📘</a>
+              <a href="#youtube">▶️</a>
+            </div>
+          </div>
+
+          <div className="footer-links-group">
+            <div className="footer-col">
+              <h4>Plataforma</h4>
+              <a href="#sobre">Sobre o Projeto</a>
+              <a href="#como-doar">Como doar</a>
+              <a href="#postos">Postos de Coleta</a>
+              <a href="#guia">Guia Ilustrado</a>
+            </div>
+
+            <div className="footer-col">
+              <h4>Informação</h4>
+              <a href="#faq">Perguntas Frequentes (FAQ)</a>
+              <a href="#diretrizes">Diretrizes Técnicas</a>
+              <a href="#contato">Contato</a>
+            </div>
+
+            <div className="footer-col">
+              <h4>Parceiros e Apoio</h4>
+              <a href="#rblh">Rede Global rBLH</a>
+              <a href="#ms">Ministério da Saúde</a>
+              <a href="#fiocruz">Fiocruz (IFF)</a>
+            </div>
+          </div>
+        </div>
+
+        <div className="footer-bottom">
+          <div>
+            <strong>Laços Maternos</strong>
+            <p>Projeto acadêmico desenvolvido para fins de Trabalho de Conclusão de Curso (TCC). Sem fins lucrativos.</p>
+          </div>
+          <div className="institutional-support">
+            <span>APOIO INSTITUCIONAL INSPIRADOR:</span>
+            <strong>SUS</strong>
+            <strong>FIOCRUZ</strong>
           </div>
         </div>
       </footer>

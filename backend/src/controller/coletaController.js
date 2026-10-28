@@ -1,42 +1,46 @@
 
 import { Router } from 'express';
 import {
-  listarColetas,
-  buscarColetaPorId
+  listarBancos,
+  buscarBancoPorId
 } from '../repository/coletaRepository.js';
 
 const endpoints = Router();
 
-endpoints.get('/coletas', async (req, resp) => {
+// Tela: Encontre um Banco de Leite
+endpoints.get('/coletas/bancos', async (req, resp) => {
   try {
-    const registros = await listarColetas();
+    const { busca } = req.query;
+
+    const registros = await listarBancos(busca || '');
 
     resp.status(200).send(registros);
   } catch (err) {
     console.error(err);
 
     resp.status(500).send({
-      erro: 'Erro ao consultar as coletas'
+      erro: 'Erro ao consultar bancos de leite'
     });
   }
 });
 
-endpoints.get('/coletas/:id', async (req, resp) => {
+// Tela: Detalhes do banco de leite
+endpoints.get('/coletas/bancos/:id', async (req, resp) => {
   try {
-    const registro = await buscarColetaPorId(req.params.id);
+    const banco = await buscarBancoPorId(req.params.id);
 
-    if (!registro) {
+    if (!banco) {
       return resp.status(404).send({
-        erro: 'Coleta não encontrada'
+        erro: 'Banco de leite não encontrado'
       });
     }
 
-    resp.status(200).send(registro);
+    resp.status(200).send(banco);
   } catch (err) {
     console.error(err);
 
     resp.status(500).send({
-      erro: 'Erro ao consultar a coleta'
+      erro: 'Erro ao consultar detalhes do banco'
     });
   }
 });
