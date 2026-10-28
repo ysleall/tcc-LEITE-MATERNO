@@ -30,3 +30,59 @@ CREATE TABLE IF NOT EXISTS quiz (
     opcao_b VARCHAR(255) NOT NULL,
     resposta_apta VARCHAR(1) NOT NULL
 );
+
+CREATE TABLE usuarios (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    senha VARCHAR(255) NOT NULL,
+    telefone VARCHAR(20),
+    endereco VARCHAR(255),
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE bancos_leite (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    descricao TEXT,
+    endereco VARCHAR(255) NOT NULL,
+    telefone VARCHAR(50),
+    horario_funcionamento VARCHAR(100),
+    atendimento_disponivel BOOLEAN DEFAULT TRUE,
+    coleta_domiciliar BOOLEAN DEFAULT TRUE,
+    coordenadas_mapa VARCHAR(100)
+);
+
+CREATE TABLE agendamentos (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    banco_id INT REFERENCES bancos_leite(id) ON DELETE CASCADE,
+    data_agendamento DATE NOT NULL,
+    turno VARCHAR(20) NOT NULL,
+    tipo_coleta VARCHAR(50) NOT NULL,
+    status VARCHAR(30) DEFAULT 'Pendente',
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE doacoes (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    banco_id INT REFERENCES bancos_leite(id) ON DELETE CASCADE,
+    quantidade_ml INT NOT NULL,
+    data_doacao DATE NOT NULL,
+    status_triagem VARCHAR(50) DEFAULT 'Em Analise'
+);
+
+CREATE TABLE conquistas (
+    id SERIAL PRIMARY KEY,
+    titulo VARCHAR(100) NOT NULL,
+    descricao TEXT,
+    icone_url VARCHAR(255)
+);
+
+CREATE TABLE usuario_conquistas (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT REFERENCES usuarios(id) ON DELETE CASCADE,
+    conquista_id INT REFERENCES conquistas(id) ON DELETE CASCADE,
+    desbloqueado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
