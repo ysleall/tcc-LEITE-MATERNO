@@ -6,6 +6,9 @@ import loginController from './controller/loginController.js';
 import quizController from './controller/quizController.js';
 import bancoController from './controller/bancoController.js';
 import notificacaoController from './controller/notificacaoController.js';
+import coletaController from './controller/coletaController.js';
+import detalhesBancoController from './controller/detalhesBancoController.js';
+
 
 export default function addRoutes(api) {
   api.use(conquistaController);
@@ -16,5 +19,8 @@ export default function addRoutes(api) {
   api.use(quizController);
   api.use(bancoController);
   api.use(notificacaoController);
+  api.use(coletaController);
+  api.use(detalhesBancoController);
 
-}
+
+} 
