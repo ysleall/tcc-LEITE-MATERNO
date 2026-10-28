@@ -16,4 +16,5 @@ export default function addRoutes(api) {
   api.use(quizController);
   api.use(bancoController);
   api.use(notificacaoController);
+
 }

@@ -1,18 +1,18 @@
-import { Router } from 'express';
+
 import { listarBancosDeLeite } from '../repository/bancoRepository.js';
 
-const endpoints = Router();
-
-endpoints.get('/banco-leite', async (req, resp) => {
+export async function buscarBancos(req, resp) {
   try {
     const { busca } = req.query;
+
     const registros = await listarBancosDeLeite(busca || '');
-    resp.send(registros);
+
+    resp.status(200).send(registros);
   } catch (err) {
-    resp.status(400).send({
-      erro: err.message
+    console.error(err);
+
+    resp.status(500).send({
+      erro: 'Erro ao consultar os bancos de leite'
     });
   }
-});
-
-export default endpoints;
+}
