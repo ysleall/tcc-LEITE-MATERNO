@@ -1,7 +1,10 @@
 
+import { Router } from 'express';
 import { listarBancosDeLeite } from '../repository/bancoRepository.js';
 
-export async function buscarBancos(req, resp) {
+const bancoController = Router();
+
+bancoController.get('/banco-leite', async (req, resp) => {
   try {
     const { busca } = req.query;
 
@@ -15,4 +18,6 @@ export async function buscarBancos(req, resp) {
       erro: 'Erro ao consultar os bancos de leite'
     });
   }
-}
+});
+
+export default bancoController;
