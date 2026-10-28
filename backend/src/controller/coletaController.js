@@ -7,7 +7,6 @@ import {
 
 const endpoints = Router();
 
-// Tela: Encontre um Banco de Leite
 endpoints.get('/coletas/bancos', async (req, resp) => {
   try {
     const { busca } = req.query;
