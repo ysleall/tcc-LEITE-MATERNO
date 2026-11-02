@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -14,6 +15,7 @@ L.Icon.Default.mergeOptions({
 });
 
 export default function Home() {
+  const navigate = useNavigate();
   const [cep, setCep] = useState('');
   const campinasCoords = [-22.8932, -47.0543];
 
@@ -37,11 +39,11 @@ export default function Home() {
   };
 
   const handleOpenLogin = () => {
-    alert('Redirecionando para a página de Entrar / Login...');
+    navigate('/login');
   };
 
   const handleStartDonation = () => {
-    alert('Iniciando o processo de pré-triagem para doação. Obrigado pelo seu ato de amor!');
+    navigate('/cadastro');
   };
 
   const handleContactBank = () => {
@@ -261,6 +263,25 @@ export default function Home() {
                 </Popup>
               </Marker>
             </MapContainer>
+          </div>
+        </div>
+      </section>
+
+      <section className="campaign-banner-section" id="campanhas">
+        <div className="campaign-card">
+          <div className="campaign-info">
+            <span className="campaign-tag">CAMPANHA NACIONAL</span>
+            <h2>Doe Leite Materno: Vida em cada gota</h2>
+            <p>
+              Participe da rede de solidariedade para apoiar mães doadoras e alimentar bebês prematuros internados em UTIs neonatais de todo o Brasil.
+            </p>
+            <div className="campaign-actions">
+              <button className="btn-primary" onClick={handleStartDonation}>Quero Participar</button>
+              <button className="btn-outline" onClick={() => scrollToSection('servicos')}>Ver Postos Próximos</button>
+            </div>
+          </div>
+          <div className="campaign-image">
+            <img src={heroImg} alt="Campanha Doe Leite" />
           </div>
         </div>
       </section>

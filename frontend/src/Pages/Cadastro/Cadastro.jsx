@@ -1,0 +1,244 @@
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import './Cadastro.scss';
+import logoImg from '../../assets/lacomaterno.png';
+import heroImg from '../../assets/amarmentar.png';
+
+export default function Cadastro({ onNavigate }) {
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [cep, setCep] = useState('');
+  const [cidade, setCidade] = useState('');
+  const [concordaTermos, setConcordaTermos] = useState(false);
+  const [carregando, setCarregando] = useState(false);
+  const [mensagemErro, setMensagemErro] = useState('');
+  const [mensagemSucesso, setMensagemSucesso] = useState('');
+
+  const navigate = useNavigate();
+
+  const handleGoTo = (path) => {
+    if (navigate) {
+      navigate(path);
+    } else if (onNavigate) {
+      onNavigate(path.replace('/', ''));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setMensagemErro('');
+    setMensagemSucesso('');
+
+    if (!concordaTermos) {
+      setMensagemErro('Você precisa aceitar os termos e a política de privacidade.');
+      return;
+    }
+
+    // Limpa pontuação do CPF se fornecido
+    const cpfLimpo = cpf.replace(/\D/g, '');
+
+    try {
+      setCarregando(true);
+      const response = await fetch('http://localhost:2026/api/auth/cadastro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome,
+          email,
+          cpf: cpfLimpo || '00000000000',
+          telefone,
+          data_nascimento: dataNascimento,
+          senha,
+          cep,
+          cidade
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMensagemSucesso('Conta criada com sucesso! Redirecionando para o login...');
+        setTimeout(() => {
+          handleGoTo('/login');
+        }, 1500);
+      } else {
+        setMensagemErro(data.mensagem || 'Erro ao realizar cadastro.');
+      }
+    } catch (error) {
+      setMensagemErro('Erro ao conectar com o servidor backend.');
+    } finally {
+      setCarregando(false);
+    }
+  };
+
+  return (
+    <div className="cadastro-page">
+      {/* Lado Esquerdo: Imagem com Slogan (Figma Imagem 5) */}
+      <div className="cadastro-visual-side">
+        <div className="decorative-circle circle-pink"></div>
+        <div className="decorative-circle circle-mint"></div>
+
+        <div className="visual-content">
+          <div className="image-circle-frame">
+            <img src={heroImg} alt="Mãe amamentando o bebê" />
+          </div>
+          <p className="slogan">Amamentar é doar vida</p>
+        </div>
+      </div>
+
+      {/* Lado Direito: Formulário de Cadastro */}
+      <div className="cadastro-form-side">
+        <div className="form-wrapper">
+          <div className="cadastro-header">
+            <img 
+              src={logoImg} 
+              alt="Laços Maternos" 
+              className="cadastro-logo" 
+              onClick={() => handleGoTo('/')}
+            />
+            <h2>Crie sua conta de doadora</h2>
+            <p>Preencha os campos abaixo para iniciar seu cadastro em nossa rede de apoio.</p>
+          </div>
+
+          {mensagemErro && <div className="feedback-msg error">{mensagemErro}</div>}
+          {mensagemSucesso && <div className="feedback-msg success">{mensagemSucesso}</div>}
+
+          <form onSubmit={handleSubmit} className="cadastro-form">
+            <div className="input-group">
+              <label htmlFor="nome">Nome completo</label>
+              <input 
+                id="nome"
+                type="text" 
+                placeholder="Ex: Maria Silva de Oliveira"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="email">E-mail</label>
+              <input 
+                id="email"
+                type="email" 
+                placeholder="exemplo@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label htmlFor="senha">Senha</label>
+                <input 
+                  id="senha"
+                  type="password" 
+                  placeholder="Crie uma senha forte"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="nascimento">Data de nascimento</label>
+                <input 
+                  id="nascimento"
+                  type="date" 
+                  value={dataNascimento}
+                  onChange={(e) => setDataNascimento(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label htmlFor="telefone">Telefone / WhatsApp</label>
+                <input 
+                  id="telefone"
+                  type="text" 
+                  placeholder="(11) 99999-9999"
+                  value={telefone}
+                  onChange={(e) => setTelefone(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="cpf">CPF</label>
+                <input 
+                  id="cpf"
+                  type="text" 
+                  placeholder="000.000.000-00"
+                  value={cpf}
+                  onChange={(e) => setCpf(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="input-group">
+                <label htmlFor="cep">CEP</label>
+                <input 
+                  id="cep"
+                  type="text" 
+                  placeholder="00000-000"
+                  value={cep}
+                  onChange={(e) => setCep(e.target.value)}
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="cidade">Cidade</label>
+                <input 
+                  id="cidade"
+                  type="text" 
+                  placeholder="Cidade onde reside"
+                  value={cidade}
+                  onChange={(e) => setCidade(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="checkbox-group">
+              <input 
+                id="termos" 
+                type="checkbox" 
+                checked={concordaTermos}
+                onChange={(e) => setConcordaTermos(e.target.checked)}
+                required
+              />
+              <label htmlFor="termos">
+                Li e concordo com a <a href="#politica" onClick={(e) => { e.preventDefault(); alert('Política de Privacidade e diretrizes de doação.'); }}>Política de Privacidade</a> e diretrizes oficiais de doação de leite humano.
+              </label>
+            </div>
+
+            <button type="submit" className="btn-cadastro-submit" disabled={carregando}>
+              {carregando ? 'Cadastrando...' : 'Criar minha conta'}
+            </button>
+          </form>
+
+          <div className="cadastro-footer">
+            <p>
+              Já possui uma conta ativa?{' '}
+              {navigate ? (
+                <Link to="/login">Fazer login</Link>
+              ) : (
+                <a href="#login" onClick={(e) => { e.preventDefault(); handleGoTo('/login'); }}>
+                  Fazer login
+                </a>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
