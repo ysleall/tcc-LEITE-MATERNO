@@ -96,7 +96,41 @@ $radius: 12px;
 
     .header-actions {
       display: flex;
+      align-items: center;
       gap: 12px;
+
+      .menu-usuario {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        .nome-usuario {
+          font-size: 0.95rem;
+          color: $text-dark;
+
+          strong {
+            color: $primary-pink;
+          }
+        }
+
+        .btn-perfil {
+          padding: 8px 16px;
+
+          &:hover {
+            color: $primary-pink;
+          }
+        }
+
+        .btn-sair {
+          padding: 6px 14px;
+          font-size: 0.85rem;
+
+          &:hover {
+            border-color: $primary-pink;
+            color: $primary-pink;
+          }
+        }
+      }
     }
   }
 

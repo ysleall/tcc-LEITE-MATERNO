@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -17,7 +17,27 @@ L.Icon.Default.mergeOptions({
 export default function Home() {
   const navigate = useNavigate();
   const [cep, setCep] = useState('');
+  const [usuario, setUsuario] = useState(null);
   const coordenadasCampinas = [-22.8932, -47.0543];
+
+  useEffect(() => {
+    const doadoraSalva = localStorage.getItem('@lacos:doadora') || localStorage.getItem('usuario');
+    if (doadoraSalva) {
+      try {
+        setUsuario(JSON.parse(doadoraSalva));
+      } catch (e) {
+        console.error('Erro ao ler dados do localStorage:', e);
+      }
+    }
+  }, []);
+
+  function handleLogout() {
+    localStorage.removeItem('@lacos:token');
+    localStorage.removeItem('@lacos:doadora');
+    localStorage.removeItem('usuario');
+    setUsuario(null);
+    navigate('/');
+  }
 
   function buscarCep(e) {
     e.preventDefault();
@@ -63,8 +83,24 @@ export default function Home() {
         </nav>
 
         <div className="header-actions">
-          <button className="btn-secondary" onClick={irParaLogin}>Entrar</button>
-          <button className="btn-primary" onClick={irParaCadastro}>Quero Doar</button>
+          {usuario ? (
+            <div className="menu-usuario">
+              <span className="nome-usuario">
+                Olá, <strong>{usuario.nome?.split(' ')[0] || 'Doadora'}</strong>
+              </span>
+              <button className="btn-secondary btn-perfil" onClick={() => navigate('/perfil')}>
+                Meu Perfil
+              </button>
+              <button className="btn-outline btn-sair" onClick={handleLogout}>
+                Sair
+              </button>
+            </div>
+          ) : (
+            <>
+              <button className="btn-secondary" onClick={irParaLogin}>Entrar</button>
+              <button className="btn-primary" onClick={irParaCadastro}>Quero Doar</button>
+            </>
+          )}
         </div>
       </header>
 
