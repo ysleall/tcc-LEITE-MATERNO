@@ -2,7 +2,7 @@ import { con } from './connection.js';
 
 export async function listarBancosDeLeite(busca = '') {
   const comando = `
-    SELECT 
+    SELECT
       id_banco AS id,
       nm_banco AS nome,
       ds_endereco AS endereco,
@@ -13,6 +13,8 @@ export async function listarBancosDeLeite(busca = '') {
   `;
 
   const termo = `%${busca}%`;
-  const [resposta] = await connection.query(comando, [termo, termo]);
+
+  const [resposta] = await con.query(comando, [termo, termo]);
+
   return resposta;
 }
