@@ -1,10 +1,13 @@
 import mysql from 'mysql2/promise';
 
-export const con = await mysql.createConnection({
+export const con = mysql.createPool({
     host: process.env.MYSQL_HOST || 'localhost',
     user: process.env.MYSQL_USER || 'root',
     password: process.env.MYSQL_PASSWORD || 'root',
-    database: process.env.MYSQL_DATABASE || 'tcc'
+    database: process.env.MYSQL_DATABASE || 'tcc',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-console.log(`Conectado ao banco de dados ${process.env.MYSQL_DATABASE || 'tcc'}!`);
+console.log(`Pool de conexões MySQL configurado para o banco: ${process.env.MYSQL_DATABASE || 'tcc'}`);

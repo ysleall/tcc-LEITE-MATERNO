@@ -4,7 +4,8 @@ import './Cadastro.scss';
 import logoImg from '../../assets/lacomaterno.png';
 import heroImg from '../../assets/amarmentar.png';
 
-export default function Cadastro({ onNavigate }) {
+export default function Cadastro() {
+  const navigate = useNavigate();
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -18,17 +19,7 @@ export default function Cadastro({ onNavigate }) {
   const [mensagemErro, setMensagemErro] = useState('');
   const [mensagemSucesso, setMensagemSucesso] = useState('');
 
-  const navigate = useNavigate();
-
-  const handleGoTo = (path) => {
-    if (navigate) {
-      navigate(path);
-    } else if (onNavigate) {
-      onNavigate(path.replace('/', ''));
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  async function cadastrarDoadora(e) {
     e.preventDefault();
     setMensagemErro('');
     setMensagemSucesso('');
@@ -38,18 +29,17 @@ export default function Cadastro({ onNavigate }) {
       return;
     }
 
-    // Limpa pontuação do CPF se fornecido
-    const cpfLimpo = cpf.replace(/\D/g, '');
+    const cpfFormatado = cpf.replace(/\D/g, '');
 
     try {
       setCarregando(true);
-      const response = await fetch('http://localhost:2026/api/auth/cadastro', {
+      const resposta = await fetch('http://localhost:2026/api/auth/cadastro', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nome,
           email,
-          cpf: cpfLimpo || '00000000000',
+          cpf: cpfFormatado || '00000000000',
           telefone,
           data_nascimento: dataNascimento,
           senha,
@@ -58,26 +48,25 @@ export default function Cadastro({ onNavigate }) {
         })
       });
 
-      const data = await response.json();
+      const dados = await resposta.json();
 
-      if (response.ok) {
+      if (resposta.ok) {
         setMensagemSucesso('Conta criada com sucesso! Redirecionando para o login...');
         setTimeout(() => {
-          handleGoTo('/login');
+          navigate('/login');
         }, 1500);
       } else {
-        setMensagemErro(data.mensagem || 'Erro ao realizar cadastro.');
+        setMensagemErro(dados.mensagem || 'Erro ao realizar cadastro.');
       }
-    } catch (error) {
-      setMensagemErro('Erro ao conectar com o servidor backend.');
+    } catch (erro) {
+      setMensagemErro('Não foi possível conectar ao servidor backend.');
     } finally {
       setCarregando(false);
     }
-  };
+  }
 
   return (
     <div className="cadastro-page">
-      {/* Lado Esquerdo: Imagem com Slogan (Figma Imagem 5) */}
       <div className="cadastro-visual-side">
         <div className="decorative-circle circle-pink"></div>
         <div className="decorative-circle circle-mint"></div>
@@ -90,7 +79,6 @@ export default function Cadastro({ onNavigate }) {
         </div>
       </div>
 
-      {/* Lado Direito: Formulário de Cadastro */}
       <div className="cadastro-form-side">
         <div className="form-wrapper">
           <div className="cadastro-header">
@@ -98,7 +86,7 @@ export default function Cadastro({ onNavigate }) {
               src={logoImg} 
               alt="Laços Maternos" 
               className="cadastro-logo" 
-              onClick={() => handleGoTo('/')}
+              onClick={() => navigate('/')}
             />
             <h2>Crie sua conta de doadora</h2>
             <p>Preencha os campos abaixo para iniciar seu cadastro em nossa rede de apoio.</p>
@@ -107,7 +95,7 @@ export default function Cadastro({ onNavigate }) {
           {mensagemErro && <div className="feedback-msg error">{mensagemErro}</div>}
           {mensagemSucesso && <div className="feedback-msg success">{mensagemSucesso}</div>}
 
-          <form onSubmit={handleSubmit} className="cadastro-form">
+          <form onSubmit={cadastrarDoadora} className="cadastro-form">
             <div className="input-group">
               <label htmlFor="nome">Nome completo</label>
               <input 
@@ -189,7 +177,7 @@ export default function Cadastro({ onNavigate }) {
                 <input 
                   id="cep"
                   type="text" 
-                  placeholder="00000-000"
+                  placeholder="00000-000" 
                   value={cep}
                   onChange={(e) => setCep(e.target.value)}
                 />
@@ -216,7 +204,7 @@ export default function Cadastro({ onNavigate }) {
                 required
               />
               <label htmlFor="termos">
-                Li e concordo com a <a href="#politica" onClick={(e) => { e.preventDefault(); alert('Política de Privacidade e diretrizes de doação.'); }}>Política de Privacidade</a> e diretrizes oficiais de doação de leite humano.
+                Li e concordo com a Política de Privacidade e as diretrizes oficiais de doação de leite humano.
               </label>
             </div>
 
@@ -227,14 +215,7 @@ export default function Cadastro({ onNavigate }) {
 
           <div className="cadastro-footer">
             <p>
-              Já possui uma conta ativa?{' '}
-              {navigate ? (
-                <Link to="/login">Fazer login</Link>
-              ) : (
-                <a href="#login" onClick={(e) => { e.preventDefault(); handleGoTo('/login'); }}>
-                  Fazer login
-                </a>
-              )}
+              Já possui uma conta ativa? <Link to="/login">Fazer login</Link>
             </p>
           </div>
         </div>

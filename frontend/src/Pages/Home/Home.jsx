@@ -17,38 +17,35 @@ L.Icon.Default.mergeOptions({
 export default function Home() {
   const navigate = useNavigate();
   const [cep, setCep] = useState('');
-  const campinasCoords = [-22.8932, -47.0543];
+  const coordenadasCampinas = [-22.8932, -47.0543];
 
-  // Função para lidar com a busca por CEP
-  const handleSearchCep = (e) => {
+  function buscarCep(e) {
     e.preventDefault();
     if (!cep.trim()) {
       alert('Por favor, digite um CEP válido.');
       return;
     }
     alert(`Buscando pontos de coleta próximos ao CEP: ${cep}`);
-    // Aqui podes integrar futuramente uma API de consulta de CEP (ex: ViaCEP)
-  };
+  }
 
-  // Funções de navegação e interatividade para os botões
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  function rolarParaSecao(id) {
+    const elemento = document.getElementById(id);
+    if (elemento) {
+      elemento.scrollIntoView({ behavior: 'smooth' });
     }
-  };
+  }
 
-  const handleOpenLogin = () => {
+  function irParaLogin() {
     navigate('/login');
-  };
+  }
 
-  const handleStartDonation = () => {
+  function irParaCadastro() {
     navigate('/cadastro');
-  };
+  }
 
-  const handleContactBank = () => {
-    alert('Abrindo canal de contacto com o Banco de Leite de Campinas...');
-  };
+  function contatarBanco() {
+    alert('Telefone do Banco de Leite de Campinas: (19) 3306-6000');
+  }
 
   return (
     <div className="home-container">
@@ -62,13 +59,12 @@ export default function Home() {
           <a href="#por-que-doar">Por que doar</a>
           <a href="#como-funciona">Como funciona</a>
           <a href="#servicos">Serviços de Leite</a>
-          <a href="#guia">Guia da Doadora</a>
           <a href="#campanhas">Campanhas</a>
         </nav>
 
         <div className="header-actions">
-          <button className="btn-secondary" onClick={handleOpenLogin}>Entrar</button>
-          <button className="btn-primary" onClick={handleStartDonation}>Quero Doar</button>
+          <button className="btn-secondary" onClick={irParaLogin}>Entrar</button>
+          <button className="btn-primary" onClick={irParaCadastro}>Quero Doar</button>
         </div>
       </header>
 
@@ -86,8 +82,8 @@ export default function Home() {
           </p>
 
           <div className="hero-buttons">
-            <button className="btn-primary" onClick={handleStartDonation}>Quero Doar</button>
-            <button className="btn-outline" onClick={() => scrollToSection('como-funciona')}>Como funciona</button>
+            <button className="btn-primary" onClick={irParaCadastro}>Quero Doar</button>
+            <button className="btn-outline" onClick={() => rolarParaSecao('como-funciona')}>Como funciona</button>
           </div>
 
           <div className="hero-seal">
@@ -210,7 +206,7 @@ export default function Home() {
         <div className="locator-container">
           <div className="locator-search-panel">
             <label htmlFor="cep-input">Digite seu CEP para localizar o ponto mais próximo:</label>
-            <form onSubmit={handleSearchCep} className="search-form">
+            <form onSubmit={buscarCep} className="search-form">
               <input 
                 id="cep-input"
                 type="text" 
@@ -238,15 +234,15 @@ export default function Home() {
                 <strong>Endereço:</strong> Av. Orosimbo Maia, 165 - Vila Itapura, Campinas - SP
               </p>
               <div className="location-actions">
-                <button className="btn-outline-sm" onClick={() => alert('Detalhes do Banco de Leite da Maternidade de Campinas.')}>Ver detalhes</button>
-                <button className="btn-primary-sm" onClick={handleContactBank}>Entrar em contato</button>
+                <button className="btn-outline-sm" onClick={() => alert('Endereço: Av. Orosimbo Maia, 165. Telefone: (19) 3306-6000')}>Ver detalhes</button>
+                <button className="btn-primary-sm" onClick={contatarBanco}>Entrar em contato</button>
               </div>
             </div>
           </div>
 
           <div className="locator-map-realtime">
             <MapContainer 
-              center={campinasCoords} 
+              center={coordenadasCampinas} 
               zoom={14} 
               scrollWheelZoom={false}
               className="leaflet-map"
@@ -255,7 +251,7 @@ export default function Home() {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <Marker position={campinasCoords}>
+              <Marker position={coordenadasCampinas}>
                 <Popup>
                   <strong>Banco de Leite Humano - Campinas</strong><br />
                   Maternidade de Campinas<br />
@@ -276,8 +272,8 @@ export default function Home() {
               Participe da rede de solidariedade para apoiar mães doadoras e alimentar bebês prematuros internados em UTIs neonatais de todo o Brasil.
             </p>
             <div className="campaign-actions">
-              <button className="btn-primary" onClick={handleStartDonation}>Quero Participar</button>
-              <button className="btn-outline" onClick={() => scrollToSection('servicos')}>Ver Postos Próximos</button>
+              <button className="btn-primary" onClick={irParaCadastro}>Quero Participar</button>
+              <button className="btn-outline" onClick={() => rolarParaSecao('servicos')}>Ver Postos Próximos</button>
             </div>
           </div>
           <div className="campaign-image">
@@ -293,34 +289,21 @@ export default function Home() {
               <img src={logoImg} alt="Laços Maternos" className="logo" />
             </div>
             <p>Uma ponte digital de solidariedade para apoiar mães doadoras e proteger a vida de milhares de recém-nascidos brasileiros.</p>
-            <div className="social-icons">
-              <a href="#instagram" onClick={(e) => { e.preventDefault(); alert('Redirecionando para o Instagram...'); }}>📷</a>
-              <a href="#facebook" onClick={(e) => { e.preventDefault(); alert('Redirecionando para o Facebook...'); }}>📘</a>
-              <a href="#youtube" onClick={(e) => { e.preventDefault(); alert('Redirecionando para o YouTube...'); }}>▶️</a>
-            </div>
           </div>
 
           <div className="footer-links-group">
             <div className="footer-col">
               <h4>Plataforma</h4>
-              <a href="#sobre" onClick={(e) => { e.preventDefault(); alert('Seção Sobre o Projeto'); }}>Sobre o Projeto</a>
-              <a href="#como-doar" onClick={(e) => { e.preventDefault(); scrollToSection('como-funciona'); }}>Como doar</a>
-              <a href="#postos" onClick={(e) => { e.preventDefault(); scrollToSection('servicos'); }}>Postos de Coleta</a>
-              <a href="#guia" onClick={(e) => { e.preventDefault(); alert('Guia Ilustrado'); }}>Guia Ilustrado</a>
+              <a href="#como-funciona" onClick={() => rolarParaSecao('como-funciona')}>Como doar</a>
+              <a href="#servicos" onClick={() => rolarParaSecao('servicos')}>Postos de Coleta</a>
+              <a href="#campanhas" onClick={() => rolarParaSecao('campanhas')}>Campanhas</a>
             </div>
 
             <div className="footer-col">
-              <h4>Informação</h4>
-              <a href="#faq" onClick={(e) => { e.preventDefault(); alert('Perguntas Frequentes (FAQ)'); }}>Perguntas Frequentes (FAQ)</a>
-              <a href="#diretrizes" onClick={(e) => { e.preventDefault(); alert('Diretrizes Técnicas (Fiocruz/ANVISA)'); }}>Diretrizes Técnicas</a>
-              <a href="#contato" onClick={(e) => { e.preventDefault(); alert('Canal de Contato'); }}>Contato</a>
-            </div>
-
-            <div className="footer-col">
-              <h4>Parceiros e Apoio</h4>
-              <a href="#rblh" onClick={(e) => { e.preventDefault(); window.open('https://rblh.fiocruz.br/', '_blank'); }}>Rede Global rBLH</a>
-              <a href="#ms" onClick={(e) => { e.preventDefault(); window.open('https://www.gov.br/saude', '_blank'); }}>Ministério da Saúde</a>
-              <a href="#fiocruz" onClick={(e) => { e.preventDefault(); window.open('https://portal.fiocruz.br/', '_blank'); }}>Fiocruz (IFF)</a>
+              <h4>Parceiros Oficiais</h4>
+              <a href="https://rblh.fiocruz.br/" target="_blank" rel="noreferrer">Rede Global rBLH</a>
+              <a href="https://www.gov.br/saude" target="_blank" rel="noreferrer">Ministério da Saúde</a>
+              <a href="https://portal.fiocruz.br/" target="_blank" rel="noreferrer">Fiocruz</a>
             </div>
           </div>
         </div>
@@ -331,7 +314,7 @@ export default function Home() {
             <p>Projeto acadêmico desenvolvido para fins de Trabalho de Conclusão de Curso (TCC). Sem fins lucrativos.</p>
           </div>
           <div className="institutional-support">
-            <span>APOIO INSTITUCIONAL INSPIRADOR:</span>
+            <span>APOIO INSTITUCIONAL:</span>
             <strong>SUS</strong>
             <strong>FIOCRUZ</strong>
           </div>

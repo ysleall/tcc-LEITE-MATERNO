@@ -1,12 +1,11 @@
-
 import { con } from './connection.js';
 
 // CADASTRAR DOADORA
 export async function saveDoadora(doadora) {
     const command = `
         INSERT INTO doadoras
-        (nome, email, cpf, telefone, data_nascimento, senha)
-        VALUES (?, ?, ?, ?, ?, ?)
+        (nome, email, cpf, telefone, data_nascimento, senha, cep, cidade, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Ativa')
     `;
 
     const [result] = await con.execute(command, [
@@ -15,7 +14,9 @@ export async function saveDoadora(doadora) {
         doadora.cpf,
         doadora.telefone,
         doadora.data_nascimento,
-        doadora.senha
+        doadora.senha,
+        doadora.cep || null,
+        doadora.cidade || null
     ]);
 
     return result.insertId;
@@ -25,8 +26,9 @@ export async function saveDoadora(doadora) {
 export async function listDoadoras() {
     const command = `
         SELECT id, nome, email, cpf, telefone,
-               data_nascimento, data_cadastro
+               data_nascimento, cep, cidade, status, data_cadastro
         FROM doadoras
+        ORDER BY nome
     `;
 
     const [linhas] = await con.execute(command);
@@ -37,7 +39,7 @@ export async function listDoadoras() {
 export async function getDoadora(id) {
     const command = `
         SELECT id, nome, email, cpf, telefone,
-               data_nascimento, data_cadastro
+               data_nascimento, cep, cidade, status, data_cadastro
         FROM doadoras
         WHERE id = ?
     `;
@@ -49,7 +51,7 @@ export async function getDoadora(id) {
 // BUSCAR DOADORA PELO EMAIL PARA LOGIN
 export async function getDoadoraLogin(email) {
     const command = `
-        SELECT id, nome, email, senha
+        SELECT id, nome, email, senha, status
         FROM doadoras
         WHERE email = ?
         LIMIT 1
@@ -67,7 +69,9 @@ export async function updateDoadora(id, doadora) {
             email = ?,
             cpf = ?,
             telefone = ?,
-            data_nascimento = ?
+            data_nascimento = ?,
+            cep = ?,
+            cidade = ?
         WHERE id = ?
     `;
 
@@ -77,6 +81,8 @@ export async function updateDoadora(id, doadora) {
         doadora.cpf,
         doadora.telefone,
         doadora.data_nascimento,
+        doadora.cep || null,
+        doadora.cidade || null,
         id
     ]);
 
