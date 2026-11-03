@@ -20,50 +20,58 @@ export default function Cadastro() {
   const [mensagemSucesso, setMensagemSucesso] = useState('');
 
   async function cadastrarDoadora(e) {
-    e.preventDefault();
-    setMensagemErro('');
-    setMensagemSucesso('');
+  e.preventDefault();
+  setMensagemErro('');
+  setMensagemSucesso('');
 
-    if (!concordaTermos) {
-      setMensagemErro('Você precisa aceitar os termos e a política de privacidade.');
-      return;
-    }
-
-    const cpfFormatado = cpf.replace(/\D/g, '');
-
-    try {
-      setCarregando(true);
-      const resposta = await fetch('http://localhost:2026/api/auth/cadastro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nome,
-          email,
-          cpf: cpfFormatado || '00000000000',
-          telefone,
-          data_nascimento: dataNascimento,
-          senha,
-          cep,
-          cidade
-        })
-      });
-
-      const dados = await resposta.json();
-
-      if (resposta.ok) {
-        setMensagemSucesso('Conta criada com sucesso! Redirecionando para o login...');
-        setTimeout(() => {
-          navigate('/login');
-        }, 1500);
-      } else {
-        setMensagemErro(dados.mensagem || 'Erro ao realizar cadastro.');
-      }
-    } catch (erro) {
-      setMensagemErro('Não foi possível conectar ao servidor backend.');
-    } finally {
-      setCarregando(false);
-    }
+  if (!concordaTermos) {
+    setMensagemErro('Você precisa aceitar os termos e a política de privacidade.');
+    return;
   }
+
+  const cpfFormatado = cpf.replace(/\D/g, '');
+  if (cpfFormatado.length !== 11) {
+    setMensagemErro('Por favor, informe um CPF válido com 11 dígitos.');
+    return;
+  }
+
+  try {
+    setCarregando(true);
+    const resposta = await fetch('http://localhost:2026/api/auth/cadastro', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        nome,
+        email,
+        cpf: cpfFormatado,
+        telefone,
+        data_nascimento: dataNascimento,
+        senha,
+        cep,
+        cidade
+      })
+    });
+
+    const dados = await resposta.json();
+
+    if (resposta.ok) {
+      setMensagemSucesso('Conta criada com sucesso! Redirecionando para o login...');
+      setTimeout(() => {
+        navigate('/login');
+      }, 1500);
+    } else {
+      const erroServidor = dados.mensagem || dados.message || dados.error || 'Erro ao realizar cadastro.';
+      setMensagemErro(erroServidor);
+    }
+  } catch (erro) {
+    setMensagemErro('Não foi possível conectar ao servidor backend.');
+  } finally {
+    setCarregando(false);
+  }
+}
 
   return (
     <div className="cadastro-page">
