@@ -1,12 +1,7 @@
--- ========================================================
--- BANCO DE DADOS: SISTEMA LAÇOS MATERNOS (TCC)
--- DIRETRIZES: ANVISA (RDC 171/2006) & FIOCRUZ / rBLH
--- ========================================================
 
 CREATE DATABASE IF NOT EXISTS tcc;
 USE tcc;
 
--- 1. TABELA DE DOADORAS (Usuárias do sistema)
 CREATE TABLE IF NOT EXISTS doadoras (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,
@@ -21,7 +16,6 @@ CREATE TABLE IF NOT EXISTS doadoras (
     data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. TABELA DE BANCOS DE LEITE HUMANO E POSTOS DE COLETA
 CREATE TABLE IF NOT EXISTS tb_banco_leite (
     id_banco INT AUTO_INCREMENT PRIMARY KEY,
     nm_banco VARCHAR(150) NOT NULL,
@@ -35,7 +29,6 @@ CREATE TABLE IF NOT EXISTS tb_banco_leite (
     nr_longitude DECIMAL(11, 8) DEFAULT -47.0543
 );
 
--- 3. TABELA DE DOAÇÕES REGISTRADAS
 CREATE TABLE IF NOT EXISTS doacao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     doadora_id INT NOT NULL,
@@ -45,7 +38,6 @@ CREATE TABLE IF NOT EXISTS doacao (
     FOREIGN KEY (doadora_id) REFERENCES doadoras(id) ON DELETE CASCADE
 );
 
--- 4. TABELA DE AGENDAMENTOS DE COLETA
 CREATE TABLE IF NOT EXISTS agendamentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     doadora_id INT NOT NULL,
@@ -59,7 +51,6 @@ CREATE TABLE IF NOT EXISTS agendamentos (
     FOREIGN KEY (banco_id) REFERENCES tb_banco_leite(id_banco) ON DELETE CASCADE
 );
 
--- 5. TABELA DO QUIZ DE PRÉ-TRIAGEM (Normas ANVISA RDC 171/2006)
 CREATE TABLE IF NOT EXISTS quiz (
     id INT AUTO_INCREMENT PRIMARY KEY,
     pergunta TEXT NOT NULL,
@@ -68,7 +59,6 @@ CREATE TABLE IF NOT EXISTS quiz (
     resposta_apta VARCHAR(1) NOT NULL -- 'A' ou 'B'
 );
 
--- 6. TABELA DE CONQUISTAS (Gamificação)
 CREATE TABLE IF NOT EXISTS conquistas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(100) NOT NULL,
@@ -77,7 +67,6 @@ CREATE TABLE IF NOT EXISTS conquistas (
     icone_url VARCHAR(255)
 );
 
--- 7. TABELA DE NOTIFICAÇÕES
 CREATE TABLE IF NOT EXISTS tb_notificacao (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150) NOT NULL,
@@ -87,18 +76,13 @@ CREATE TABLE IF NOT EXISTS tb_notificacao (
     data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- ========================================================
--- INSERÇÃO DE DADOS INICIAIS (SEEDS)
--- ========================================================
 
--- Bancos de Leite padrão
 INSERT IGNORE INTO tb_banco_leite (id_banco, nm_banco, ds_endereco, ds_telefone, bt_aberto_hoje, ds_horario, bt_coleta_domiciliar)
 VALUES 
 (1, 'Banco de Leite Humano – Campinas', 'Av. Orosimbo Maia, 165 - Vila Itapura, Campinas - SP', '(19) 3306-6000', TRUE, '08:00 às 17:00', TRUE),
 (2, 'Centro de Lactação Maternidade de Campinas', 'Av. Barão de Itapura, 924 - Botafogo, Campinas - SP', '(19) 3306-6039', TRUE, '07:30 às 18:00', TRUE),
 (3, 'Hospital da Mulher Prof. Dr. José Aristodemo Pinotti (CAISM/Unicamp)', 'R. Alexander Fleming, 101 - Cidade Universitária, Campinas - SP', '(19) 3521-7278', TRUE, '08:00 às 17:00', TRUE);
 
--- Perguntas da Pré-triagem (Critérios Oficiais da ANVISA / Rede Brasileira rBLH)
 INSERT IGNORE INTO quiz (id, pergunta, opcao_a, opcao_b, resposta_apta)
 VALUES
 (1, 'Você está saudável e produzindo leite em excesso além do que seu bebê consome?', 'Sim, saudável e com excedente', 'Não', 'A'),
@@ -107,7 +91,7 @@ VALUES
 (4, 'Você possui exames de pré-natal/pós-parto negativos para HIV, Hepatites e Sífilis?', 'Sim, exames em dia e negativos', 'Não possuo os exames', 'A'),
 (5, 'Você está tomando medicamentos contínuos que contraindicam a amamentação?', 'Não tomo remédios contraindicados', 'Sim, tomo medicamentos', 'A');
 
--- Conquistas do Sistema
+
 INSERT IGNORE INTO conquistas (id, titulo, descricao, meta_ml, icone_url)
 VALUES
 (1, 'Primeiros Laços', 'Realizou sua primeira doação de leite humano!', 1, 'badge-first'),
@@ -116,7 +100,7 @@ VALUES
 (4, 'Estrela da Solidariedade', 'Manteve doações consecutivas por 3 meses seguidos!', 0, 'badge-star'),
 (5, 'Guardiã da Vida', 'Superou 10 Litros doados, alimentando dezenas de bebês!', 10000, 'badge-guardian');
 
--- Notificações Iniciais
+
 INSERT IGNORE INTO tb_notificacao (id, titulo, mensagem, tipo)
 VALUES
 (1, 'Campanha de Doação Ativa', 'Os estoques de leite pasteurizado para prematuros precisam de doações neste mês. Seu apoio salva vidas!', 'campanha'),
