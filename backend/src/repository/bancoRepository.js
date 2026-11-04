@@ -1,4 +1,5 @@
-import { con } from './connection.js';
+
+import { con } from '../config/connection.js';
 
 export async function listarBancosDeLeite(busca = '') {
   const comando = `
@@ -13,7 +14,6 @@ export async function listarBancosDeLeite(busca = '') {
   `;
 
   const termo = `%${busca}%`;
-
   const [resposta] = await con.query(comando, [termo, termo]);
 
   return resposta;

@@ -1,0 +1,281 @@
+$primary-pink: #e65c83;
+$primary-pink-hover: #d14971;
+$primary-pink-light: #fbebf0;
+$text-dark: #2d3748;
+$text-muted: #718096;
+$border-color: #e2e8f0;
+$card-bg: #ffffff;
+
+.cadastro-page {
+  min-height: 100vh;
+  display: flex;
+  background-color: #ffffff;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+
+  // Lado Esquerdo: Área visual com foto circular e frase
+  .cadastro-visual-side {
+    flex: 1.1;
+    background: linear-gradient(135deg, #fcf8f9 0%, #f4fbf7 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+
+    .decorative-circle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+
+      &.circle-pink {
+        width: 420px;
+        height: 420px;
+        background: rgba(230, 92, 131, 0.08);
+        top: 10%;
+        left: 5%;
+      }
+
+      &.circle-mint {
+        width: 360px;
+        height: 360px;
+        background: rgba(72, 187, 120, 0.08);
+        bottom: 10%;
+        right: 5%;
+      }
+    }
+
+    .visual-content {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+
+      .image-circle-frame {
+        width: 310px;
+        height: 310px;
+        border-radius: 50%;
+        overflow: hidden;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+        border: 6px solid #ffffff;
+        margin-bottom: 28px;
+        background-color: #fff;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+        }
+      }
+
+      .slogan {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #4a5568;
+        letter-spacing: -0.2px;
+      }
+    }
+  }
+
+  // Lado Direito: Formulário de Cadastro
+  .cadastro-form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 60px;
+    background-color: #ffffff;
+
+    .form-wrapper {
+      width: 100%;
+      max-width: 480px;
+
+      .cadastro-header {
+        text-align: left;
+        margin-bottom: 22px;
+
+        .cadastro-logo {
+          height: 42px;
+          width: auto;
+          margin-bottom: 16px;
+          cursor: pointer;
+          object-fit: contain;
+          transition: transform 0.2s;
+
+          &:hover {
+            transform: scale(1.02);
+          }
+        }
+
+        h2 {
+          font-size: 1.7rem;
+          font-weight: 700;
+          color: $text-dark;
+          margin-bottom: 6px;
+          letter-spacing: -0.5px;
+        }
+
+        p {
+          font-size: 0.9rem;
+          color: $text-muted;
+          line-height: 1.45;
+        }
+      }
+
+      .feedback-msg {
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        margin-bottom: 16px;
+
+        &.error {
+          background-color: #fff5f5;
+          color: #e53e3e;
+          border: 1px solid #fed7d7;
+        }
+
+        &.success {
+          background-color: #f0fff4;
+          color: #2f855a;
+          border: 1px solid #c6f6d5;
+        }
+      }
+
+      .cadastro-form {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+
+        .form-row {
+          display: flex;
+          gap: 12px;
+
+          .input-group {
+            flex: 1;
+          }
+        }
+
+        .input-group {
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
+
+          label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #4a5568;
+          }
+
+          input {
+            padding: 10px 13px;
+            border: 1px solid $border-color;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            background-color: #fdfdfd;
+            transition: all 0.2s ease;
+
+            &:focus {
+              border-color: $primary-pink;
+              background-color: #ffffff;
+              box-shadow: 0 0 0 3px rgba(230, 92, 131, 0.15);
+            }
+
+            &::placeholder {
+              color: #a0aec0;
+            }
+          }
+        }
+
+        .checkbox-group {
+          display: flex;
+          align-items: flex-start;
+          gap: 8px;
+          margin-top: 4px;
+
+          input[type="checkbox"] {
+            margin-top: 3px;
+            accent-color: $primary-pink;
+            cursor: pointer;
+          }
+
+          label {
+            font-size: 0.78rem;
+            color: $text-muted;
+            line-height: 1.4;
+
+            a {
+              color: $primary-pink;
+              text-decoration: none;
+
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
+        }
+
+        .btn-cadastro-submit {
+          background-color: $primary-pink;
+          color: #ffffff;
+          border: none;
+          padding: 13px;
+          border-radius: 25px;
+          font-weight: 600;
+          font-size: 0.95rem;
+          cursor: pointer;
+          margin-top: 8px;
+          transition: background-color 0.2s, transform 0.1s;
+
+          &:hover:not(:disabled) {
+            background-color: $primary-pink-hover;
+          }
+
+          &:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+          }
+
+          &:active:not(:disabled) {
+            transform: scale(0.98);
+          }
+        }
+      }
+
+      .cadastro-footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 0.86rem;
+        color: $text-muted;
+
+        a {
+          color: $primary-pink;
+          font-weight: 600;
+          text-decoration: none;
+          margin-left: 4px;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+
+  // Responsividade
+  @media (max-width: 900px) {
+    flex-direction: column;
+
+    .cadastro-visual-side {
+      display: none;
+    }
+
+    .cadastro-form-side {
+      padding: 30px 20px;
+    }
+  }
+}

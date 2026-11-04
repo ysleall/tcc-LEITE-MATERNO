@@ -7,6 +7,7 @@ import quizController from './controller/quizController.js';
 import bancoController from './controller/bancoController.js';
 import dashboardController from './controller/dashboardController.js';
 
+
 export default function addRoutes(api) {
   api.use(conquistaController);
   api.use(doacaoController);
@@ -17,3 +18,4 @@ export default function addRoutes(api) {
   api.use(bancoController);
   api.use(dashboardController);
 }
+
