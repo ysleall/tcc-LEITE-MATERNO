@@ -1,4 +1,4 @@
-import { con } from "./connection.js";
+import { con } from "../config/connection.js";
 
 export async function listDoacoes(doadora_id) {
 
