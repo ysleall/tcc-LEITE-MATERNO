@@ -51,7 +51,7 @@ endpoints.put('/quiz/:id', async (req, resp) => {
 });
 
 
-// DELETAR PERGUNTA
+
 endpoints.delete('/quiz/:id', async (req, resp) => {
 
     let id = req.params.id;
@@ -64,7 +64,7 @@ endpoints.delete('/quiz/:id', async (req, resp) => {
 });
 
 
-// VERIFICAR RESULTADO DO QUIZ
+
 endpoints.post('/quiz/resultado', async (req, resp) => {
 
     let respostas = req.body.respostas;
