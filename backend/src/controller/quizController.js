@@ -2,9 +2,6 @@ import * as dbQuiz from '../repository/quizRepository.js';
 
 import { Router } from "express";
 const endpoints = Router();
-
-
-
 endpoints.post('/quiz', async (req, resp) => {
 
     let quiz = req.body;
@@ -16,18 +13,12 @@ endpoints.post('/quiz', async (req, resp) => {
         mensagem: 'Pergunta cadastrada!'
     });
 });
-
-
-
 endpoints.get('/quiz', async (req, resp) => {
 
     let quiz = await dbQuiz.listQuiz();
 
     resp.send(quiz);
 });
-
-
-
 endpoints.get('/quiz/:id', async (req, resp) => {
 
     let id = req.params.id;
@@ -36,7 +27,6 @@ endpoints.get('/quiz/:id', async (req, resp) => {
 
     resp.send(quiz);
 });
-
 endpoints.put('/quiz/:id', async (req, resp) => {
 
     let id = req.params.id;
@@ -49,8 +39,6 @@ endpoints.put('/quiz/:id', async (req, resp) => {
         qtd: qtd
     });
 });
-
-
 // DELETAR PERGUNTA
 endpoints.delete('/quiz/:id', async (req, resp) => {
 
