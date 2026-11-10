@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 
 import {
@@ -16,8 +16,8 @@ import L from 'leaflet';
 
 import './Home.scss';
 import logoImg from '../../assets/lacomaterno.png';
-import heroImg from '../../assets/amarmentar.png';
-
+import heroImg from '../../assets/pezinho.jpg';
+import secondImg from '../../assets/nenem.jpg'
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -184,8 +184,7 @@ export default function Home() {
                     <a href="#servicos">Bancos de leite</a>
 
                     <a href="#campanhas">Campanhas</a>
-<a onClick={() => navigate('/quiz')}>Pré-triagem</a>
-                </nav>
+<Link to="/quiz">Pré-triagem</Link>                </nav>
 
                 <div className="botoes-cabecalho">
                     {usuario ? (
@@ -269,7 +268,7 @@ export default function Home() {
 
                 <div className="area-imagem-destaque">
                     <div className="moldura-imagem">
-                        <img src={heroImg} alt="Mãe amamentando o bebê" />
+                        <img src={heroImg} alt="Pezinho de uma bebê" />
                         <div className="selo selo-seguranca"></div>
                     </div>
                 </div>
@@ -548,7 +547,7 @@ export default function Home() {
 
                     <div className="imagem-campanha">
                         <img
-                            src={heroImg}
+                            src={secondImg}
                             alt="Campanha de doação de leite materno"
                         />
                     </div>

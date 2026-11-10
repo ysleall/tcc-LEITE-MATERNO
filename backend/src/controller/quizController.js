@@ -1,12 +1,11 @@
+
 import * as dbQuiz from '../repository/quizRepository.js';
 
-import { Router } from "express";
+import { Router } from 'express';
+
 const endpoints = Router();
 
-
-
 endpoints.post('/quiz', async (req, resp) => {
-
     let quiz = req.body;
 
     let id = await dbQuiz.saveQuiz(quiz);
@@ -17,19 +16,13 @@ endpoints.post('/quiz', async (req, resp) => {
     });
 });
 
-
-
 endpoints.get('/quiz', async (req, resp) => {
-
     let quiz = await dbQuiz.listQuiz();
 
     resp.send(quiz);
 });
 
-
-
 endpoints.get('/quiz/:id', async (req, resp) => {
-
     let id = req.params.id;
 
     let quiz = await dbQuiz.getQuiz(id);
@@ -38,9 +31,7 @@ endpoints.get('/quiz/:id', async (req, resp) => {
 });
 
 endpoints.put('/quiz/:id', async (req, resp) => {
-
     let id = req.params.id;
-
     let quiz = req.body;
 
     let qtd = await dbQuiz.updateQuiz(id, quiz);
@@ -50,10 +41,7 @@ endpoints.put('/quiz/:id', async (req, resp) => {
     });
 });
 
-
-
 endpoints.delete('/quiz/:id', async (req, resp) => {
-
     let id = req.params.id;
 
     let qtd = await dbQuiz.deleteQuiz(id);
@@ -63,10 +51,7 @@ endpoints.delete('/quiz/:id', async (req, resp) => {
     });
 });
 
-
-
 endpoints.post('/quiz/resultado', async (req, resp) => {
-
     let respostas = req.body.respostas;
 
     let perguntas = await dbQuiz.listQuiz();
@@ -74,7 +59,6 @@ endpoints.post('/quiz/resultado', async (req, resp) => {
     let apta = true;
 
     for (let pergunta of perguntas) {
-
         let respostaUsuario = respostas[pergunta.id];
 
         if (respostaUsuario !== pergunta.resposta_apta) {
@@ -95,6 +79,5 @@ endpoints.post('/quiz/resultado', async (req, resp) => {
         });
     }
 });
-
 
 export default endpoints;

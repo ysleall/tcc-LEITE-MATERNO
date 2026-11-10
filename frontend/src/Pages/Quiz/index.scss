@@ -106,3 +106,55 @@
         width: 100%;
     }
 }
+
+
+
+.navegacao-quiz {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 25px;
+    gap: 15px;
+}
+
+.voltar {
+    background-color: white;
+    color: #d96c91;
+    border: 1px solid #d96c91;
+    padding: 15px 30px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.opcoes {
+    display: flex;
+    gap: 15px;
+}
+
+.opcoes button {
+    width: 50%;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    background-color: #faf8f5;
+    cursor: pointer;
+}
+
+.opcoes button.selecionado {
+    background-color: #d96c91;
+    color: white;
+    border-color: #d96c91;
+}
+
+.opcoes button:hover {
+    border-color: #d96c91;
+}
+
+@media (max-width: 600px) {
+    .opcoes {
+        flex-direction: column;
+    }
+
+    .opcoes button {
+        width: 100%;
+    }
+}

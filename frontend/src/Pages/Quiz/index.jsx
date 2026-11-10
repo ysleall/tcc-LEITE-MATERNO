@@ -1,14 +1,22 @@
 
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import api from '../../services/api';
+import logoImg from '../../assets/lacomaterno.png';
+
+import '../Home/Home.scss';
 import './index.scss';
 
 export default function Quiz() {
+    const navigate = useNavigate();
+
     const [perguntas, setPerguntas] = useState([]);
     const [respostas, setRespostas] = useState({});
     const [resultado, setResultado] = useState(null);
     const [carregando, setCarregando] = useState(true);
-
-    const API = 'http://localhost:2026';
+    const [erro, setErro] = useState('');
+    const [perguntaAtual, setPerguntaAtual] = useState(0);
 
     useEffect(() => {
         carregarPerguntas();
@@ -16,15 +24,19 @@ export default function Quiz() {
 
     async function carregarPerguntas() {
         try {
-            let resposta = await fetch(`${API}/quiz`);
-            let dados = await resposta.json();
+            setCarregando(true);
+            setErro('');
 
-            setPerguntas(dados);
+            const resposta = await api.get('/quiz');
+
+            setPerguntas(resposta.data);
+
         } catch (erro) {
-            alert('Erro ao carregar as perguntas!');
+            console.error(erro);
+            setErro('Não foi possível carregar as perguntas.');
+        } finally {
+            setCarregando(false);
         }
-
-        setCarregando(false);
     }
 
     function escolherResposta(id, resposta) {
@@ -34,128 +46,233 @@ export default function Quiz() {
         });
     }
 
+    function proximaPergunta() {
+        const pergunta = perguntas[perguntaAtual];
+
+        if (!respostas[pergunta.id]) {
+            alert('Escolha uma resposta antes de continuar!');
+            return;
+        }
+
+        setPerguntaAtual(perguntaAtual + 1);
+    }
+
+    function voltarPergunta() {
+        setPerguntaAtual(perguntaAtual - 1);
+    }
+
     async function finalizarQuiz() {
-        if (Object.keys(respostas).length !== perguntas.length) {
-            alert('Responda todas as perguntas!');
+        const pergunta = perguntas[perguntaAtual];
+
+        if (!respostas[pergunta.id]) {
+            alert('Escolha uma resposta antes de finalizar!');
             return;
         }
 
         try {
-            let resposta = await fetch(`${API}/quiz/resultado`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    respostas: respostas
-                })
+            const resposta = await api.post('/quiz/resultado', {
+                respostas: respostas
             });
 
-            let dados = await resposta.json();
-
-            setResultado(dados);
+            setResultado(resposta.data);
 
         } catch (erro) {
+            console.error(erro);
             alert('Erro ao verificar suas respostas!');
         }
+    }
+
+    function refazerQuiz() {
+        setRespostas({});
+        setResultado(null);
+        setPerguntaAtual(0);
     }
 
     if (carregando) {
         return <p>Carregando perguntas...</p>;
     }
 
+    const pergunta = perguntas[perguntaAtual];
+
     return (
-        <div className="quiz">
+        <div className="pagina-inicial">
 
-            <div className="conteudo">
+            <header className="cabecalho">
 
-                <p className="etapa">PASSO INICIAL ESSENCIAL</p>
+                <div className="area-logo">
+                    <img
+                        src={logoImg}
+                        alt="Laços Maternos"
+                        className="imagem-logo"
+                    />
+                </div>
 
-                <h1>Vamos verificar algumas informações iniciais.</h1>
+                <nav className="menu-navegacao">
+                    <a href="/#inicio">Início</a>
+                    <a href="/#por-que-doar">Por que doar</a>
+                    <a href="/#como-funciona">Como funciona</a>
+                    <a href="/#servicos">Bancos de Leite</a>
+                    <a href="/quiz" className="link-ativo">
+                        Pré-triagem
+                    </a>
+                </nav>
 
-                <p className="descricao">
-                    Esta pré-triagem ajuda a identificar alguns critérios
-                    básicos para iniciar o processo de doação de leite materno.
-                </p>
+                <div className="botoes-cabecalho">
 
-                {resultado === null ? (
+                    <button
+                        className="botao-secundario"
+                        onClick={() => navigate('/login')}
+                    >
+                        Entrar
+                    </button>
 
-                    <>
-                        {perguntas.map((item, index) => (
+                    <button
+                        className="botao-principal"
+                        onClick={() => navigate('/cadastro')}
+                    >
+                        Quero Doar
+                    </button>
 
-                            <div className="pergunta" key={item.id}>
+                </div>
 
-                                <div className="topo">
-                                    <span>PERGUNTA ATUAL</span>
-                                    <span>{index + 1} / {perguntas.length}</span>
-                                </div>
+            </header>
 
-                                <h2>{item.pergunta}</h2>
+            <div className="quiz">
 
-                                <div className="quiz-opcoes">
+                <div className="conteudo">
 
-                                    <button
-                                        className={
-                                            respostas[item.id] === item.opcao_a
-                                                ? 'selecionado'
-                                                : ''
-                                        }
-                                        onClick={() =>
-                                            escolherResposta(item.id, item.opcao_a)
-                                        }
-                                    >
-                                        {item.opcao_a}
-                                    </button>
+                    <p className="etapa">
+                        PASSO INICIAL ESSENCIAL
+                    </p>
 
-                                    <button
-                                        className={
-                                            respostas[item.id] === item.opcao_b
-                                                ? 'selecionado'
-                                                : ''
-                                        }
-                                        onClick={() =>
-                                            escolherResposta(item.id, item.opcao_b)
-                                        }
-                                    >
-                                        {item.opcao_b}
-                                    </button>
+                    <h1>
+                        Vamos verificar algumas informações iniciais.
+                    </h1>
 
-                                </div>
+                    <p className="descricao">
+                        Esta pré-triagem ajuda a identificar alguns critérios
+                        básicos para iniciar o processo de doação de leite materno.
+                    </p>
+
+                    {erro ? (
+
+                        <div className="resultado">
+                            <p>{erro}</p>
+                            <button onClick={carregarPerguntas}>
+                                Tentar novamente
+                            </button>
+                        </div>
+
+                    ) : perguntas.length === 0 ? (
+
+                        <div className="resultado">
+                            <p>Nenhuma pergunta encontrada.</p>
+                        </div>
+
+                    ) : resultado !== null ? (
+
+                        <div className="resultado">
+
+                            <h2>Pré-triagem concluída!</h2>
+
+                            <p>{resultado.mensagem}</p>
+
+                            <button onClick={refazerQuiz}>
+                                Refazer pré-triagem
+                            </button>
+
+                        </div>
+
+                    ) : (
+
+                        <div className="pergunta">
+
+                            <div className="topo">
+
+                                <span>PERGUNTA ATUAL</span>
+
+                                <span>
+                                    {perguntaAtual + 1} / {perguntas.length}
+                                </span>
 
                             </div>
 
-                        ))}
+                            <h2>{pergunta.pergunta}</h2>
 
-                        <button
-                            className="finalizar"
-                            onClick={finalizarQuiz}
-                        >
-                            Finalizar pré-triagem
-                        </button>
-                    </>
+                            <div className="opcoes">
 
-                ) : (
+                                <button
+                                    className={
+                                        respostas[pergunta.id] === pergunta.opcao_a
+                                            ? 'selecionado'
+                                            : ''
+                                    }
+                                    onClick={() =>
+                                        escolherResposta(
+                                            pergunta.id,
+                                            pergunta.opcao_a
+                                        )
+                                    }
+                                >
+                                    {pergunta.opcao_a}
+                                </button>
 
-                    <div className="resultado">
+                                <button
+                                    className={
+                                        respostas[pergunta.id] === pergunta.opcao_b
+                                            ? 'selecionado'
+                                            : ''
+                                    }
+                                    onClick={() =>
+                                        escolherResposta(
+                                            pergunta.id,
+                                            pergunta.opcao_b
+                                        )
+                                    }
+                                >
+                                    {pergunta.opcao_b}
+                                </button>
 
-                        <h2>
-                            {resultado.apta
-                                ? 'Pré-triagem concluída!'
-                                : 'Pré-triagem concluída'}
-                        </h2>
+                            </div>
 
-                        <p>{resultado.mensagem}</p>
+                            <div className="navegacao-quiz">
 
-                        <button onClick={() => {
-                            setRespostas({});
-                            setResultado(null);
-                        }}>
-                            Refazer pré-triagem
-                        </button>
+                                {perguntaAtual > 0 && (
+                                    <button
+                                        className="voltar"
+                                        onClick={voltarPergunta}
+                                    >
+                                        Voltar
+                                    </button>
+                                )}
 
-                    </div>
+                                {perguntaAtual === perguntas.length - 1 ? (
 
-                )}
+                                    <button
+                                        className="finalizar"
+                                        onClick={finalizarQuiz}
+                                    >
+                                        Finalizar pré-triagem
+                                    </button>
+
+                                ) : (
+
+                                    <button
+                                        className="finalizar"
+                                        onClick={proximaPergunta}
+                                    >
+                                        Próxima pergunta
+                                    </button>
+
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    )}
+
+                </div>
 
             </div>
 
