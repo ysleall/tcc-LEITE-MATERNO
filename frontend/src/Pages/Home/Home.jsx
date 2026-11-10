@@ -1,8 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-axios.get('http://localhost:2026/admin/dashboard');
-axios.get('http://localhost:2026/banco-leite');
+import api from '../../services/api';
 
 import {
     MapContainer,
@@ -19,7 +18,6 @@ import './Home.scss';
 import logoImg from '../../assets/lacomaterno.png';
 import heroImg from '../../assets/amarmentar.png';
 
-
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -28,14 +26,10 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png'
 });
 
-
-// AJUSTAR O MAPA PARA MOSTRAR OS BANCOS ENCONTRADOS
 function AjustarMapa({ bancos }) {
-
     const mapa = useMap();
 
     useEffect(() => {
-
         let pontos = [];
 
         for (let banco of bancos) {
@@ -62,52 +56,81 @@ function AjustarMapa({ bancos }) {
         if (pontosUnicos.length === 1) {
             mapa.setView(pontosUnicos[0], 14);
         } else if (pontosUnicos.length > 1) {
-            mapa.fitBounds(pontosUnicos, { padding: [30, 30], maxZoom: 14 });
+            mapa.fitBounds(pontosUnicos, {
+                padding: [30, 30],
+                maxZoom: 14
+            });
+        } else {
+            mapa.setView([-22.8932, -47.0543], 6);
         }
-
     }, [bancos, mapa]);
 
     return null;
 }
 
-
 export default function Home() {
-
     const navigate = useNavigate();
 
     const [busca, setBusca] = useState('');
     const [bancos, setBancos] = useState([]);
     const [totalBancos, setTotalBancos] = useState(0);
     const [dashboard, setDashboard] = useState(null);
+    const [usuario, setUsuario] = useState(null);
 
     const coordenadasCampinas = [-22.8932, -47.0543];
 
-
-    // BUSCAR DADOS DO PAINEL E DOS BANCOS
     useEffect(() => {
+        const doadoraSalva =
+            localStorage.getItem('@lacos:doadora') ||
+            localStorage.getItem('usuario');
 
-        axios.get('http://localhost:2026/admin/dashboard')
+        if (doadoraSalva) {
+            try {
+                setUsuario(JSON.parse(doadoraSalva));
+            } catch (erro) {
+                console.error('Erro ao ler os dados do usuário:', erro);
+            }
+        }
+
+        api.get('/admin/dashboard')
             .then(res => {
                 setDashboard(res.data);
             })
-            .catch(erro => console.log(erro));
+            .catch(erro => {
+                console.log('Erro ao carregar o dashboard:', erro);
+            });
 
-        axios.get('http://localhost:2026/banco-leite')
+        api.get('/banco-leite')
             .then(res => {
                 setBancos(res.data);
                 setTotalBancos(res.data.length);
             })
-            .catch(erro => console.log(erro));
-
+            .catch(erro => {
+                console.log('Erro ao carregar os bancos de leite:', erro);
+            });
     }, []);
 
+    function irParaLogin() {
+        navigate('/login');
+    }
 
-    // BUSCAR BANCO PELO NOME OU ENDEREÇO
+    function irParaCadastro() {
+        navigate('/cadastro');
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('@lacos:token');
+        localStorage.removeItem('@lacos:doadora');
+        localStorage.removeItem('usuario');
+
+        setUsuario(null);
+        navigate('/');
+    }
+
     function buscarBanco(e) {
-
         e.preventDefault();
 
-        axios.get('http://localhost:2026/banco-leite', {
+        api.get('/banco-leite', {
             params: {
                 busca: busca
             }
@@ -115,55 +138,43 @@ export default function Home() {
             .then(res => {
                 setBancos(res.data);
             })
-            .catch(erro => console.log(erro));
-
+            .catch(erro => {
+                console.log('Erro ao buscar banco de leite:', erro);
+            });
     }
 
-
-    // VOLTAR A MOSTRAR TODOS OS BANCOS
     function mostrarTodosBancos() {
-
         setBusca('');
 
-        axios.get('http://localhost:2026/banco-leite')
+        api.get('/banco-leite')
             .then(res => {
                 setBancos(res.data);
             })
-            .catch(erro => console.log(erro));
-
+            .catch(erro => {
+                console.log('Erro ao carregar os bancos:', erro);
+            });
     }
 
-
     function rolarParaSecao(id) {
-
         const elemento = document.getElementById(id);
 
         if (elemento) {
-            elemento.scrollIntoView({ behavior: 'smooth' });
+            elemento.scrollIntoView({
+                behavior: 'smooth'
+            });
         }
-
     }
-
-
-    function irParaLogin() {
-        navigate('/login');
-    }
-
-
-    function irParaCadastro() {
-        navigate('/cadastro');
-    }
-
 
     return (
-
         <div className="pagina-inicial">
 
-            {/* CABEÇALHO */}
             <header className="cabecalho">
-
                 <div className="area-logo">
-                    <img src={logoImg} alt="Laços Maternos" className="imagem-logo" />
+                    <img
+                        src={logoImg}
+                        alt="Laços Maternos"
+                        className="imagem-logo"
+                    />
                 </div>
 
                 <nav className="menu-navegacao">
@@ -171,27 +182,54 @@ export default function Home() {
                     <a href="#por-que-doar">Por que doar</a>
                     <a href="#como-funciona">Como funciona</a>
                     <a href="#servicos">Bancos de leite</a>
+
                     <a href="#campanhas">Campanhas</a>
+<a onClick={() => navigate('/quiz')}>Pré-triagem</a>
                 </nav>
 
                 <div className="botoes-cabecalho">
-                    <button className="botao-secundario" onClick={irParaLogin}>
-                        Entrar
-                    </button>
+                    {usuario ? (
+                        <div className="menu-usuario">
+                            <span className="nome-usuario">
+                                Olá, <strong>{usuario.nome?.split(' ')[0] || 'Doadora'}</strong>
+                            </span>
 
-                    <button className="botao-principal" onClick={irParaCadastro}>
-                        Quero Doar
-                    </button>
+                            <button
+                                className="btn-secondary btn-perfil"
+                                onClick={() => navigate('/perfil')}
+                            >
+                                Meu Perfil
+                            </button>
+
+                            <button
+                                className="btn-outline btn-sair"
+                                onClick={handleLogout}
+                            >
+                                Sair
+                            </button>
+                        </div>
+                    ) : (
+                        <>
+                            <button
+                                className="botao-secundario"
+                                onClick={irParaLogin}
+                            >
+                                Entrar
+                            </button>
+
+                            <button
+                                className="botao-principal"
+                                onClick={irParaCadastro}
+                            >
+                                Quero Doar
+                            </button>
+                        </>
+                    )}
                 </div>
-
             </header>
 
-
-            {/* DESTAQUE PRINCIPAL */}
             <section className="secao-destaque" id="inicio">
-
                 <div className="conteudo-destaque">
-
                     <span className="etiqueta-projeto">PROJETO ACADÊMICO TCC</span>
 
                     <h1>
@@ -206,7 +244,10 @@ export default function Home() {
                     </p>
 
                     <div className="botoes-destaque">
-                        <button className="botao-principal" onClick={irParaCadastro}>
+                        <button
+                            className="botao-principal"
+                            onClick={irParaCadastro}
+                        >
                             Quero Doar
                         </button>
 
@@ -220,9 +261,10 @@ export default function Home() {
 
                     <div className="selo-apoio">
                         <span className="ponto-decorativo">•</span>
-                        <span>Apoiando a Rede Brasileira de Bancos de Leite Humano (rBLH)</span>
+                        <span>
+                            Apoiando a Rede Brasileira de Bancos de Leite Humano (rBLH)
+                        </span>
                     </div>
-
                 </div>
 
                 <div className="area-imagem-destaque">
@@ -231,18 +273,13 @@ export default function Home() {
                         <div className="selo selo-seguranca"></div>
                     </div>
                 </div>
-
             </section>
 
-
-            {/* INDICADORES DO PROJETO */}
             <section className="secao-indicadores">
-
                 <span className="subtitulo-secao">NOSSO IMPACTO SOCIAL</span>
                 <h2>Força coletiva para salvar vidas</h2>
 
                 <div className="grade-indicadores">
-
                     <div className="cartao-indicador">
                         <h3>{totalBancos}</h3>
                         <h4>Bancos de Leite Humano</h4>
@@ -250,13 +287,17 @@ export default function Home() {
                     </div>
 
                     <div className="cartao-indicador">
-                        <h3>{dashboard ? dashboard.total_doado_litros + ' L' : '...'}</h3>
+                        <h3>
+                            {dashboard ? dashboard.total_doado_litros + ' L' : '...'}
+                        </h3>
                         <h4>Leite doado</h4>
                         <p>Volume total registrado pelas doadoras.</p>
                     </div>
 
                     <div className="cartao-indicador">
-                        <h3>{dashboard ? dashboard.total_doadoras : '...'}</h3>
+                        <h3>
+                            {dashboard ? dashboard.total_doadoras : '...'}
+                        </h3>
                         <h4>Doadoras cadastradas</h4>
                         <p>Mulheres cadastradas na plataforma.</p>
                     </div>
@@ -266,15 +307,10 @@ export default function Home() {
                         <h4>Transforma Vidas</h4>
                         <p>Cada doação representa um gesto de solidariedade.</p>
                     </div>
-
                 </div>
-
             </section>
 
-
-            {/* POR QUE DOAR */}
             <section className="secao-beneficios" id="por-que-doar">
-
                 <span className="subtitulo-secao">CONSCIÊNCIA E AMOR</span>
                 <h2>Por que doar leite materno?</h2>
 
@@ -284,9 +320,8 @@ export default function Home() {
                 </p>
 
                 <div className="grade-beneficios">
-
                     <div className="cartao-beneficio">
-                        <div className="area-icone rosa">👶</div>
+                        <div className="area-icone rosa"></div>
                         <h3>Para o bebê</h3>
                         <p>
                             Contribui para a alimentação e o desenvolvimento de recém-nascidos,
@@ -304,22 +339,17 @@ export default function Home() {
                     </div>
 
                     <div className="cartao-beneficio">
-                        <div className="area-icone verde">🤝</div>
+                        <div className="area-icone verde"></div>
                         <h3>Para a sociedade</h3>
                         <p>
                             Cada quantidade doada importa e ajuda a fortalecer a rede de
                             solidariedade entre as famílias.
                         </p>
                     </div>
-
                 </div>
-
             </section>
 
-
-            {/* COMO FUNCIONA */}
             <section className="secao-como-funciona" id="como-funciona">
-
                 <span className="subtitulo-secao">PASSO A PASSO</span>
                 <h2>Como funciona a doação?</h2>
 
@@ -328,7 +358,6 @@ export default function Home() {
                 </p>
 
                 <div className="grade-etapas">
-
                     <div className="cartao-etapa">
                         <span className="numero-etapa">01</span>
                         <h3>Cadastre-se</h3>
@@ -352,30 +381,23 @@ export default function Home() {
                         <h3>Agende a coleta</h3>
                         <p>Entre em contato com o banco para combinar a coleta.</p>
                     </div>
-
                 </div>
 
                 <div className="caixa-informativa">
-                    <span className="icone-informativo">ℹ️</span>
+                    <span className="icone-informativo">ℹ</span>
                     <p>
                         <strong>Nota importante:</strong> As condições para doação devem ser
                         avaliadas e confirmadas pelo Banco de Leite e pelos profissionais de saúde responsáveis.
                     </p>
                 </div>
-
             </section>
 
-
-            {/* BANCOS DE LEITE E MAPA */}
             <section className="secao-localizacao" id="servicos">
-
                 <span className="subtitulo-secao">PROXIMIDADE</span>
                 <h2>Encontre um Banco de Leite</h2>
 
                 <div className="conteudo-localizacao">
-
                     <div className="painel-busca">
-
                         <label htmlFor="campo-busca">
                             Digite o nome do banco ou o endereço:
                         </label>
@@ -403,9 +425,7 @@ export default function Home() {
                         </button>
 
                         {bancos.map(banco => (
-
                             <div className="cartao-banco" key={banco.id}>
-
                                 <div className="cabecalho-banco">
                                     <h3>{banco.nome}</h3>
                                 </div>
@@ -431,19 +451,22 @@ export default function Home() {
                                 </p>
 
                                 {banco.descricao && (
-                                    <p className="descricao-banco">{banco.descricao}</p>
+                                    <p className="descricao-banco">
+                                        {banco.descricao}
+                                    </p>
                                 )}
 
                                 <div className="acoes-banco">
                                     {banco.telefone && (
-                                        <a className="botao-contato" href={`tel:${banco.telefone}`}>
+                                        <a
+                                            className="botao-contato"
+                                            href={`tel:${banco.telefone}`}
+                                        >
                                             Entrar em contato
                                         </a>
                                     )}
                                 </div>
-
                             </div>
-
                         ))}
 
                         {bancos.length === 0 && (
@@ -451,20 +474,15 @@ export default function Home() {
                                 Nenhum banco encontrado. Tente pesquisar por outro nome ou endereço.
                             </p>
                         )}
-
                     </div>
 
-
-                    {/* MAPA COM COORDENADAS VINDAS DO MYSQL */}
                     <div className="area-mapa">
-
                         <MapContainer
                             center={coordenadasCampinas}
                             zoom={6}
                             scrollWheelZoom={false}
                             className="mapa-bancos"
                         >
-
                             <AjustarMapa bancos={bancos} />
 
                             <TileLayer
@@ -473,8 +491,8 @@ export default function Home() {
                             />
 
                             {bancos.map(banco => (
-
-                                banco.latitude != null && banco.longitude != null && (
+                                banco.latitude != null &&
+                                banco.longitude != null && (
                                     <Marker
                                         key={banco.id}
                                         position={[
@@ -493,25 +511,15 @@ export default function Home() {
                                         </Popup>
                                     </Marker>
                                 )
-
                             ))}
-
                         </MapContainer>
-
                     </div>
-
                 </div>
-
             </section>
 
-
-            {/* CAMPANHAS */}
             <section className="secao-campanha" id="campanhas">
-
                 <div className="cartao-campanha">
-
                     <div className="informacoes-campanha">
-
                         <span className="etiqueta-campanha">CAMPANHA NACIONAL</span>
 
                         <h2>Doe Leite Materno: Vida em cada gota</h2>
@@ -522,7 +530,10 @@ export default function Home() {
                         </p>
 
                         <div className="acoes-campanha">
-                            <button className="botao-principal" onClick={irParaCadastro}>
+                            <button
+                                className="botao-principal"
+                                onClick={irParaCadastro}
+                            >
                                 Quero Participar
                             </button>
 
@@ -533,38 +544,35 @@ export default function Home() {
                                 Ver bancos de leite
                             </button>
                         </div>
-
                     </div>
 
                     <div className="imagem-campanha">
-                        <img src={heroImg} alt="Campanha de doação de leite materno" />
+                        <img
+                            src={heroImg}
+                            alt="Campanha de doação de leite materno"
+                        />
                     </div>
-
                 </div>
-
             </section>
 
-
-            {/* RODAPÉ */}
             <footer className="rodape">
-
                 <div className="parte-superior-rodape">
-
                     <div className="marca-rodape">
-
                         <div className="area-logo">
-                            <img src={logoImg} alt="Laços Maternos" className="imagem-logo" />
+                            <img
+                                src={logoImg}
+                                alt="Laços Maternos"
+                                className="imagem-logo"
+                            />
                         </div>
 
                         <p>
                             Uma ponte digital de solidariedade para apoiar mães doadoras
                             e ajudar a cuidar de recém-nascidos.
                         </p>
-
                     </div>
 
                     <div className="grupo-links-rodape">
-
                         <div className="coluna-rodape">
                             <h4>Plataforma</h4>
                             <a href="#como-funciona">Como doar</a>
@@ -574,17 +582,32 @@ export default function Home() {
 
                         <div className="coluna-rodape">
                             <h4>Parceiros oficiais</h4>
-                            <a href="https://rblh.fiocruz.br/" target="_blank" rel="noreferrer">Rede Brasileira rBLH</a>
-                            <a href="https://www.gov.br/saude" target="_blank" rel="noreferrer">Ministério da Saúde</a>
-                            <a href="https://portal.fiocruz.br/" target="_blank" rel="noreferrer">Fiocruz</a>
+                            <a
+                                href="https://rblh.fiocruz.br/"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Rede Brasileira rBLH
+                            </a>
+                            <a
+                                href="https://www.gov.br/saude"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Ministério da Saúde
+                            </a>
+                            <a
+                                href="https://portal.fiocruz.br/"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                Fiocruz
+                            </a>
                         </div>
-
                     </div>
-
                 </div>
 
                 <div className="parte-inferior-rodape">
-
                     <div>
                         <strong>Laços Maternos</strong>
                         <p>
@@ -598,13 +621,9 @@ export default function Home() {
                         <strong>SUS</strong>
                         <strong>FIOCRUZ</strong>
                     </div>
-
                 </div>
-
             </footer>
 
         </div>
-
     );
-
 }
