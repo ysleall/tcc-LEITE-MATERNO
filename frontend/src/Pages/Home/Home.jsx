@@ -101,10 +101,10 @@ export default function Home() {
             });
 
         api.get('/banco-leite')
-            .then(res => {
-                setBancos(res.data);
-                setTotalBancos(res.data.length);
-            })
+           .then(res => {
+    setBancos(res.data);
+    setTotalBancos(res.data.length);
+})
             .catch(erro => {
                 console.log('Erro ao carregar os bancos de leite:', erro);
             });
