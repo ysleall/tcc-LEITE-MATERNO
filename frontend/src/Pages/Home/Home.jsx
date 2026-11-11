@@ -201,6 +201,8 @@ export default function Home() {
     window.open(urlGoogleMaps, '_blank');
   }
 
+    
+
   return (
     <div className="home-container">
       <header className="home-header">
