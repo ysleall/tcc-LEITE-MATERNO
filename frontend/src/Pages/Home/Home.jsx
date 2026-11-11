@@ -275,7 +275,7 @@ export default function Home() {
             </section>
 
             <section className="secao-indicadores">
-                <span className="subtitulo-secao">NOSSO IMPACTO SOCIAL</span>
+        
                 <h2>Força coletiva para salvar vidas</h2>
 
                 <div className="grade-indicadores">
@@ -310,7 +310,7 @@ export default function Home() {
             </section>
 
             <section className="secao-beneficios" id="por-que-doar">
-                <span className="subtitulo-secao">CONSCIÊNCIA E AMOR</span>
+            
                 <h2>Por que doar leite materno?</h2>
 
                 <p className="descricao-secao">
@@ -320,7 +320,7 @@ export default function Home() {
 
                 <div className="grade-beneficios">
                     <div className="cartao-beneficio">
-                        <div className="area-icone rosa"></div>
+            
                         <h3>Para o bebê</h3>
                         <p>
                             Contribui para a alimentação e o desenvolvimento de recém-nascidos,
@@ -328,8 +328,7 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="cartao-beneficio">
-                        <div className="area-icone roxo">🩺</div>
+                    <div className="cartao-beneficio">            
                         <h3>Para a saúde</h3>
                         <p>
                             O leite humano contém nutrientes e componentes de defesa importantes
@@ -338,7 +337,7 @@ export default function Home() {
                     </div>
 
                     <div className="cartao-beneficio">
-                        <div className="area-icone verde"></div>
+                    
                         <h3>Para a sociedade</h3>
                         <p>
                             Cada quantidade doada importa e ajuda a fortalecer a rede de
@@ -373,12 +372,6 @@ export default function Home() {
                         <span className="numero-etapa">03</span>
                         <h3>Escolha o banco</h3>
                         <p>Consulte os bancos de leite disponíveis na plataforma.</p>
-                    </div>
-
-                    <div className="cartao-etapa">
-                        <span className="numero-etapa">04</span>
-                        <h3>Agende a coleta</h3>
-                        <p>Entre em contato com o banco para combinar a coleta.</p>
                     </div>
                 </div>
 

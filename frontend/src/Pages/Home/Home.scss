@@ -64,7 +64,6 @@
 
 
 .menu-navegacao a,
-
 .coluna-rodape a {
 
     color: #665058;
@@ -80,7 +79,6 @@
 
 
 .menu-navegacao a:hover,
-
 .menu-navegacao .link-ativo,
 
 .coluna-rodape a:hover {
@@ -411,7 +409,6 @@
 
 
 
-/* INDICADORES */
 
 
 
@@ -619,27 +616,6 @@
 
 
 
-.area-icone.rosa {
-
-    background: #fff0f2;
-
-}
-
-
-
-.area-icone.roxo {
-
-    background: #f3efff;
-
-}
-
-
-
-.area-icone.verde {
-
-    background: #edf5ef;
-
-}
 
 
 
@@ -686,21 +662,14 @@
 }
 
 
-
 .grade-etapas {
-
-    display: grid;
-
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-
+    display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 17px;
-
     max-width: 1120px;
-
     margin: 0 auto;
-
-    text-align: left;
-
+    text-align: center;
 }
 
 
@@ -708,7 +677,6 @@
 .cartao-etapa {
 
     min-height: 165px;
-
     padding: 21px;
 
     border: 1px solid #f0e8e8;
@@ -752,23 +720,14 @@
 .caixa-informativa {
 
     max-width: 1120px;
-
     display: flex;
-
     align-items: flex-start;
-
     gap: 12px;
-
     margin: 28px auto 0;
-
     padding: 17px 20px;
-
     border-radius: 10px;
-
     background: #eef5f0;
-
     color: #647c6c;
-
     text-align: left;
 
 }
@@ -776,71 +735,45 @@
 
 
 .icone-informativo {
-
     flex-shrink: 0;
-
 }
 
 
 
 .caixa-informativa p {
-
     margin: 0;
-
     font-size: 11px;
-
     line-height: 1.7;
-
 }
 
 .secao-localizacao {
-
     padding: 65px 8%;
-
     background: #fbf8f5;
-
     text-align: center;
-
 }
 
 
 
 .conteudo-localizacao {
-
     display: grid;
-
     grid-template-columns: minmax(300px, 0.9fr) minmax(0, 1.1fr);
-
-    align-items: stretch;
-
+    align-items: start;
     gap: 25px;
-
     max-width: 1120px;
-
     margin: 0 auto;
-
     text-align: left;
-
 }
 
-
-
 .painel-busca {
-
     min-width: 0;
-
 }
 
 
 
 .painel-busca > label {
-
     display: block;
-
     margin-bottom: 9px;
-
     color: #604c54;
-
     font-size: 12px;
 
 }
