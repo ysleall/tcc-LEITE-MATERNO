@@ -1,25 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import './Home.scss';
 import logoImg from '../../assets/lacomaterno.png';
 import heroImg from '../../assets/amarmentar.png';
 
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+const pinkIcon = new L.DivIcon({
+  className: 'custom-pink-pin',
+  html: `
+    <div className="pin-marker">
+      <svg width="32" height="42" viewBox="0 0 32 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 0C7.163 0 0 7.163 0 16C0 28 16 42 16 42C16 42 32 28 32 16C32 7.163 24.837 0 16 0Z" fill="#E65C83"/>
+        <circle cx="16" cy="16" r="7" fill="white"/>
+      </svg>
+    </div>
+  `,
+  iconSize: [32, 42],
+  iconAnchor: [16, 42],
+  popupAnchor: [0, -40]
 });
+
+function RecentralizarMapa({ coords }) {
+  const map = useMap();
+  useEffect(() => {
+    if (coords) {
+      map.flyTo(coords, 14, { animate: true });
+    }
+  }, [coords, map]);
+  return null;
+}
+
+const LISTA_BANCOS_LEITE = [
+  {
+    id: 1,
+    nome: 'Banco de Leite Humano – Campinas',
+    hospital: 'Maternidade de Campinas',
+    horario: '08:00 às 17:00',
+    endereco: 'Av. Orosimbo Maia, 165 - Vila Itapura, Campinas - SP',
+    telefone: '(19) 3306-6000',
+    coords: [-22.8932, -47.0543]
+  },
+  {
+    id: 2,
+    nome: 'Banco de Leite Humano – São Paulo (SP)',
+    hospital: 'Hospital Maternidade Leonor Mendes de Barros',
+    horario: '08:00 às 17:00',
+    endereco: 'Av. Celso Garcia, 2477 - Belenzinho, São Paulo - SP',
+    telefone: '(11) 2692-0100',
+    coords: [-23.5365, -46.5932]
+  },
+  {
+    id: 3,
+    nome: 'Posto de Coleta – Zona Sul',
+    hospital: 'Hospital Infantil Sabará',
+    horario: '08:00 às 18:00',
+    endereco: 'Av. Angélica, 1987 - Consolação, São Paulo - SP',
+    telefone: '(11) 3155-2800',
+    coords: [-23.5505, -46.6576]
+  }
+];
+
+function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return (R * c).toFixed(1);
+}
 
 export default function Home() {
   const navigate = useNavigate();
   const [cep, setCep] = useState('');
   const [usuario, setUsuario] = useState(null);
-  const coordenadasCampinas = [-22.8932, -47.0543];
+  const [carregando, setCarregando] = useState(false);
+  const [coordsMapa, setCoordsMapa] = useState([-22.8932, -47.0543]);
+  const [bancoSelecionado, setBancoSelecionado] = useState({
+    ...LISTA_BANCOS_LEITE[0],
+    distancia: '2.4 km'
+  });
 
   useEffect(() => {
     const doadoraSalva = localStorage.getItem('@lacos:doadora') || localStorage.getItem('usuario');
@@ -40,13 +104,76 @@ export default function Home() {
     navigate('/');
   }
 
-  function buscarCep(e) {
+  async function buscarCep(e) {
     e.preventDefault();
-    if (!cep.trim()) {
+    const cepLimpo = cep.replace(/\D/g, '');
+    
+    if (!cepLimpo) {
       alert('Por favor, digite um CEP válido.');
       return;
     }
+
+    if (cepLimpo.length !== 8) {
+      alert('Por favor, digite um CEP válido com 8 dígitos.');
+      return;
+    }
+
+    setCarregando(true);
     alert(`Buscando pontos de coleta próximos ao CEP: ${cep}`);
+
+    try {
+      const resViaCep = await fetch(`https://viacep.com.br/ws/${cepLimpo}/json/`);
+      const dataViaCep = await resViaCep.json();
+
+      if (dataViaCep.erro) {
+        alert('CEP não encontrado. Verifique o número digitado.');
+        setCarregando(false);
+        return;
+      }
+
+      const enderecoBusca = `${dataViaCep.logradouro || ''}, ${dataViaCep.bairro || ''}, ${dataViaCep.localidade} - ${dataViaCep.uf}`;
+      const resGeo = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(enderecoBusca)}`
+      );
+      const dataGeo = await resGeo.json();
+
+      if (dataGeo && dataGeo.length > 0) {
+        const userLat = parseFloat(dataGeo[0].lat);
+        const userLon = parseFloat(dataGeo[0].lon);
+
+        let bancoMaisProximo = LISTA_BANCOS_LEITE[0];
+        let menorDistancia = Infinity;
+
+        LISTA_BANCOS_LEITE.forEach((banco) => {
+          const dist = parseFloat(calcularDistanciaKm(userLat, userLon, banco.coords[0], banco.coords[1]));
+          if (dist < menorDistancia) {
+            menorDistancia = dist;
+            bancoMaisProximo = banco;
+          }
+        });
+
+        setCoordsMapa(bancoMaisProximo.coords);
+        setBancoSelecionado({
+          ...bancoMaisProximo,
+          distancia: `${menorDistancia} km`
+        });
+      } else {
+        setCoordsMapa([-23.5505, -46.6333]);
+        setBancoSelecionado({
+          nome: `Posto de Coleta – ${dataViaCep.localidade}`,
+          hospital: `Unidade Básica de Saúde (${dataViaCep.bairro || 'Central'})`,
+          horario: '08:00 às 17:00',
+          endereco: `${dataViaCep.logradouro || 'Rua Principal'}, ${dataViaCep.bairro || 'Centro'} - ${dataViaCep.localidade}/${dataViaCep.uf}`,
+          telefone: '(19) 3306-6000',
+          distancia: '1.2 km',
+          coords: [-23.5505, -46.6333]
+        });
+      }
+    } catch (err) {
+      alert('Ocorreu um erro ao buscar o CEP. Tente novamente.');
+    } finally {
+      setCarregando(false);
+    }
   }
 
   function rolarParaSecao(id) {
@@ -65,7 +192,13 @@ export default function Home() {
   }
 
   function contatarBanco() {
-    alert('Telefone do Banco de Leite de Campinas: (19) 3306-6000');
+    alert(`Telefone do ${bancoSelecionado.nome}: ${bancoSelecionado.telefone}`);
+  }
+
+  function abrirRotaOnibus() {
+    const destino = encodeURIComponent(bancoSelecionado.endereco);
+    const urlGoogleMaps = `https://www.google.com/maps/dir/?api=1&destination=${destino}&travelmode=transit`;
+    window.open(urlGoogleMaps, '_blank');
   }
 
   return (
@@ -81,6 +214,7 @@ export default function Home() {
           <a href="#como-funciona">Como funciona</a>
           <a href="#servicos">Serviços de Leite</a>
           <a href="#campanhas">Campanhas</a>
+          <a href="Detalhes">Ver Detalhes</a>
         </nav>
 
         <div className="header-actions">
@@ -247,52 +381,59 @@ export default function Home() {
               <input 
                 id="cep-input"
                 type="text" 
-                placeholder="13012-100" 
+                placeholder="99999-999" 
                 value={cep}
                 onChange={(e) => setCep(e.target.value)}
               />
-              <button type="submit" className="btn-search">Buscar</button>
+              <button type="submit" className="btn-search" disabled={carregando}>
+                {carregando ? 'Buscando...' : 'Buscar'}
+              </button>
             </form>
 
             <div className="location-card">
               <div className="location-header">
                 <div>
-                  <h3>Banco de Leite Humano – Campinas</h3>
-                  <small>Maternidade de Campinas</small>
+                  <h3>{bancoSelecionado.nome}</h3>
+                  <small>{bancoSelecionado.hospital}</small>
                 </div>
-                <span className="distance-badge">2.4 km</span>
+                <span className="distance-badge">{bancoSelecionado.distancia}</span>
               </div>
               <div className="status-tags">
                 <span className="tag-status open">ABERTO HOJE</span>
                 <span className="tag-service">Coleta domiciliar disponível</span>
               </div>
               <p className="address-info">
-                <strong>Horário:</strong> 08:00 às 17:00<br />
-                <strong>Endereço:</strong> Av. Orosimbo Maia, 165 - Vila Itapura, Campinas - SP
+                <strong>Horário:</strong> {bancoSelecionado.horario}<br />
+                <strong>Endereço:</strong> {bancoSelecionado.endereco}
               </p>
               <div className="location-actions">
-                <button className="btn-outline-sm" onClick={() => alert('Endereço: Av. Orosimbo Maia, 165. Telefone: (19) 3306-6000')}>Ver detalhes</button>
+                <button className="btn-outline-sm" onClick={() => alert(`Endereço: ${bancoSelecionado.endereco}\nTelefone: ${bancoSelecionado.telefone}`)}>Ver detalhes</button>
                 <button className="btn-primary-sm" onClick={contatarBanco}>Entrar em contato</button>
+                <button className="btn-outline-sm btn-bus" onClick={abrirRotaOnibus}>Rota de Ônibus 🚌</button>
               </div>
             </div>
           </div>
 
           <div className="locator-map-realtime">
+            <div className="map-top-bar">
+              <span>NAS, BRASIL</span>
+            </div>
             <MapContainer 
-              center={coordenadasCampinas} 
+              center={coordsMapa} 
               zoom={14} 
               scrollWheelZoom={false}
               className="leaflet-map"
             >
+              <RecentralizarMapa coords={coordsMapa} />
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
-              <Marker position={coordenadasCampinas}>
+              <Marker position={coordsMapa} icon={pinkIcon}>
                 <Popup>
-                  <strong>Banco de Leite Humano - Campinas</strong><br />
-                  Maternidade de Campinas<br />
-                  Aberto hoje (08:00 - 17:00)
+                  <strong>{bancoSelecionado.nome}</strong><br />
+                  {bancoSelecionado.hospital}<br />
+                  Aberto hoje ({bancoSelecionado.horario})
                 </Popup>
               </Marker>
             </MapContainer>

@@ -5,6 +5,7 @@ import './index.scss';
 import Home from './Pages/Home/Home.jsx';
 import Login from './Pages/login/login.jsx';
 import Cadastro from './Pages/Cadastro/Cadastro.jsx';
+import Detalhes from './Pages/Detalhes/Detalhes.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -14,6 +15,7 @@ root.render(
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/detalhes" element={<Detalhes />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
