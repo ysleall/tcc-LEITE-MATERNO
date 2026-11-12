@@ -104,3 +104,9 @@ INSERT IGNORE INTO tb_notificacao (id, titulo, mensagem, tipo)
 VALUES
 (1, 'Campanha de Doação Ativa', 'Os estoques de leite pasteurizado para prematuros precisam de doações neste mês. Seu apoio salva vidas!', 'campanha'),
 (2, 'Orientações de Coleta', 'Lembre-se: use sempre frasco de vidro de café solúvel com tampa plástica esterilizado em água fervente por 15 minutos.', 'guia');
+
+
+
+
+select * from doadoras;
+drop database tcc;
