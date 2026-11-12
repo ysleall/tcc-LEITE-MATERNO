@@ -1,5 +1,6 @@
 
-import { con } from './connection.js';
+import { con } from '../config/connection.js';
+
 export async function listarBancos(busca = '') {
   const comando = `
     SELECT
@@ -20,6 +21,7 @@ export async function listarBancos(busca = '') {
 
   return resposta;
 }
+
 export async function buscarBancoPorId(id) {
   const comando = `
     SELECT
@@ -36,3 +38,4 @@ export async function buscarBancoPorId(id) {
 
   return resposta[0];
 }
+

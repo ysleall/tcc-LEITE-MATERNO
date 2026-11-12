@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Cadastro.scss';
 import logoImg from '../../assets/lacomaterno.png';
-import heroImg from '../../assets/amarmentar.png';
+import heroImg from '../../assets/nenememae.jpg';
 
 export default function Cadastro() {
   const navigate = useNavigate();

@@ -23,7 +23,7 @@ endpoints.get('/coletas/bancos', async (req, resp) => {
   }
 });
 
-// Tela: Detalhes do banco de leite
+
 endpoints.get('/coletas/bancos/:id', async (req, resp) => {
   try {
     const banco = await buscarBancoPorId(req.params.id);

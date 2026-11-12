@@ -1,20 +1,25 @@
-
-import { con } from './connection.js';
-
+import { con } from '../config/connection.js';
 export async function listarBancosDeLeite(busca = '') {
-  const comando = `
-    SELECT 
-      id_banco AS id,
-      nm_banco AS nome,
-      ds_endereco AS endereco,
-      ds_telefone AS telefone,
-      bt_aberto_hoje AS abertoHoje
-    FROM tb_banco_leite
-    WHERE nm_banco LIKE ? OR ds_endereco LIKE ?
-  `;
 
-  const termo = `%${busca}%`;
-  const [resposta] = await con.query(comando, [termo, termo]);
+    const comando = `
+        select
+            id_banco as id,
+            nm_banco as nome,
+            ds_endereco as endereco,
+            ds_telefone as telefone,
+            bt_aberto_hoje as abertoHoje,
+            ds_horario as horario,
+            ds_descricao as descricao,
+            bt_coleta_domiciliar as coletaDomiciliar,
+            nr_latitude as latitude,
+            nr_longitude as longitude
+        from tb_banco_leite
+        where nm_banco like ? or ds_endereco like ?
+    `;
 
-  return resposta;
+    const termo = '%' + busca + '%';
+
+    const [resposta] = await con.query(comando, [termo, termo]);
+
+    return resposta;
 }
