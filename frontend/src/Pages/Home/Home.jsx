@@ -16,8 +16,9 @@ import L from 'leaflet';
 
 import './Home.scss';
 import logoImg from '../../assets/lacomaterno.png';
-import heroImg from '../../assets/pezinho.jpg';
-import secondImg from '../../assets/nenem.jpg'
+import heroImg from '../../assets/amarmentar.png';
+
+
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -539,10 +540,6 @@ export default function Home() {
                     </div>
 
                     <div className="imagem-campanha">
-                        <img
-                            src={secondImg}
-                            alt="Campanha de doação de leite materno"
-                        />
                     </div>
                 </div>
             </section>
