@@ -15,7 +15,7 @@ import L from 'leaflet';
 
 import './Home.scss';
 import logoImg from '../../assets/lacomaterno.png';
-import heroImg from '../../assets/amarmentar.png';
+import heroImg from '../../assets/nenememae.jpg';
 
 delete L.Icon.Default.prototype._getIconUrl;
 
