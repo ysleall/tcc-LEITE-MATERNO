@@ -10,7 +10,7 @@ api.use(express.json());
 
 addRoutes(api);
 
-const port = process.env.PORT || 2026;
+const port = process.env.PORT || 2027;
 
 api.listen(port, () => {
     console.log(`API iniciada na porta ${port}`);

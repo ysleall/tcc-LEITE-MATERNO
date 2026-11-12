@@ -18,6 +18,11 @@ export default function Quiz() {
     const [erro, setErro] = useState('');
     const [perguntaAtual, setPerguntaAtual] = useState(0);
 
+  
+    const [estaLogada] = useState(() => {
+        return Boolean(localStorage.getItem('@lacos:token'));
+    });
+
     useEffect(() => {
         carregarPerguntas();
     }, []);
@@ -32,7 +37,7 @@ export default function Quiz() {
             setPerguntas(resposta.data);
 
         } catch (erro) {
-            console.error(erro);
+            console.error('Erro ao carregar perguntas:', erro);
             setErro('Não foi possível carregar as perguntas.');
         } finally {
             setCarregando(false);
@@ -77,7 +82,7 @@ export default function Quiz() {
             setResultado(resposta.data);
 
         } catch (erro) {
-            console.error(erro);
+            console.error('Erro ao finalizar pré-triagem:', erro);
             alert('Erro ao verificar suas respostas!');
         }
     }
@@ -104,6 +109,8 @@ export default function Quiz() {
                         src={logoImg}
                         alt="Laços Maternos"
                         className="imagem-logo"
+                        onClick={() => navigate('/')}
+                        style={{ cursor: 'pointer' }}
                     />
                 </div>
 
@@ -112,6 +119,7 @@ export default function Quiz() {
                     <a href="/#por-que-doar">Por que doar</a>
                     <a href="/#como-funciona">Como funciona</a>
                     <a href="/#servicos">Bancos de Leite</a>
+
                     <a href="/quiz" className="link-ativo">
                         Pré-triagem
                     </a>
@@ -119,19 +127,34 @@ export default function Quiz() {
 
                 <div className="botoes-cabecalho">
 
-                    <button
-                        className="botao-secundario"
-                        onClick={() => navigate('/login')}
-                    >
-                        Entrar
-                    </button>
+                    {estaLogada ? (
 
-                    <button
-                        className="botao-principal"
-                        onClick={() => navigate('/cadastro')}
-                    >
-                        Quero Doar
-                    </button>
+                        <button
+                            className="botao-principal"
+                            onClick={() => navigate('/perfil')}
+                        >
+                            Meu perfil 
+                        </button>
+
+                    ) : (
+
+                        <>
+                            <button
+                                className="botao-secundario"
+                                onClick={() => navigate('/login')}
+                            >
+                                Entrar
+                            </button>
+
+                            <button
+                                className="botao-principal"
+                                onClick={() => navigate('/cadastro')}
+                            >
+                                Quero Doar
+                            </button>
+                        </>
+
+                    )}
 
                 </div>
 
@@ -158,6 +181,7 @@ export default function Quiz() {
 
                         <div className="resultado">
                             <p>{erro}</p>
+
                             <button onClick={carregarPerguntas}>
                                 Tentar novamente
                             </button>
@@ -269,13 +293,9 @@ export default function Quiz() {
                             </div>
 
                         </div>
-
                     )}
-
                 </div>
-
             </div>
-
         </div>
     );
 }

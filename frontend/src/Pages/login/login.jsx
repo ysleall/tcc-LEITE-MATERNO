@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './login.scss';
@@ -10,10 +11,12 @@ export default function Login() {
   const [senha, setSenha] = useState('');
   const [carregando, setCarregando] = useState(false);
   const [mensagemErro, setMensagemErro] = useState('');
+  const [mensagemSucesso, setMensagemSucesso] = useState('');
 
   async function fazerLogin(e) {
     e.preventDefault();
     setMensagemErro('');
+    setMensagemSucesso('');
 
     if (!email || !senha) {
       setMensagemErro('Por favor, preencha todos os campos.');
@@ -22,7 +25,8 @@ export default function Login() {
 
     try {
       setCarregando(true);
-      const resposta = await fetch('http://localhost:2026/api/auth/login', {
+
+      const resposta = await fetch('http://localhost:2027/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha })
@@ -35,12 +39,18 @@ export default function Login() {
           localStorage.setItem('@lacos:token', dados.token);
           localStorage.setItem('@lacos:doadora', JSON.stringify(dados.doadora));
         }
-        alert('Login efetuado com sucesso!');
-        navigate('/');
+
+        setMensagemSucesso('Seja bem-vinda de volta! Login realizado com sucesso.');
+
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+
       } else {
         setMensagemErro(dados.mensagem || 'E-mail ou senha incorretos.');
       }
     } catch (erro) {
+      console.error('Erro ao conectar com o backend:', erro);
       setMensagemErro('Não foi possível conectar ao servidor backend.');
     } finally {
       setCarregando(false);
@@ -64,24 +74,38 @@ export default function Login() {
       <div className="login-form-side">
         <div className="form-wrapper">
           <div className="login-header">
-            <img 
-              src={logoImg} 
-              alt="Laços Maternos" 
-              className="login-logo" 
-              onClick={() => navigate('/')} 
+            <img
+              src={logoImg}
+              alt="Laços Maternos"
+              className="login-logo"
+              onClick={() => navigate('/')}
             />
+
             <h2>Bem-vinda de volta</h2>
-            <p>Faça login para gerenciar suas doações ou realizar uma pré-triagem.</p>
+            <p>
+              Faça login para gerenciar suas doações ou realizar uma pré-triagem.
+            </p>
           </div>
 
-          {mensagemErro && <div className="login-error-msg">{mensagemErro}</div>}
+          {mensagemErro && (
+            <div className="login-error-msg">
+              {mensagemErro}
+            </div>
+          )}
+
+          {mensagemSucesso && (
+            <div className="login-success-msg">
+              <span className="success-heart">♡</span>
+              <span>{mensagemSucesso}</span>
+            </div>
+          )}
 
           <form onSubmit={fazerLogin} className="login-form">
             <div className="input-group">
               <label htmlFor="email">E-mail</label>
-              <input 
-                id="email" 
-                type="email" 
+              <input
+                id="email"
+                type="email"
                 placeholder="seumail@exemplo.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -91,9 +115,9 @@ export default function Login() {
 
             <div className="input-group">
               <label htmlFor="senha">Senha</label>
-              <input 
-                id="senha" 
-                type="password" 
+              <input
+                id="senha"
+                type="password"
                 placeholder="Digite sua senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
@@ -102,12 +126,22 @@ export default function Login() {
             </div>
 
             <div className="form-options">
-              <a href="#esqueceu" onClick={(e) => { e.preventDefault(); alert('Em breve recuperação de senha.'); }}>
+              <a
+                href="#esqueceu"
+                onClick={(e) => {
+                  e.preventDefault();
+                  alert('Em breve recuperação de senha.');
+                }}
+              >
                 Esqueci minha senha
               </a>
             </div>
 
-            <button type="submit" className="btn-login-submit" disabled={carregando}>
+            <button
+              type="submit"
+              className="btn-login-submit"
+              disabled={carregando || !!mensagemSucesso}
+            >
               {carregando ? 'Entrando...' : 'Entrar'}
             </button>
           </form>
@@ -116,7 +150,11 @@ export default function Login() {
             <p>
               Ainda não tem cadastro? <Link to="/cadastro">Criar conta</Link>
             </p>
-            <button className="btn-back-home" onClick={() => navigate('/')}>
+
+            <button
+              className="btn-back-home"
+              onClick={() => navigate('/')}
+            >
               ← Voltar para o Início
             </button>
           </div>

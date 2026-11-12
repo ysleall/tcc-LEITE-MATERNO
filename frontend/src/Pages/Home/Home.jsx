@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
@@ -105,6 +106,7 @@ export default function Home() {
         localStorage.removeItem('@lacos:token');
         localStorage.removeItem('@lacos:doadora');
         localStorage.removeItem('usuario');
+
         setUsuario(null);
         navigate('/');
     }
@@ -120,7 +122,9 @@ export default function Home() {
                 setBancos(lista);
                 setTotalBancos(lista.length);
             })
-            .catch(erro => console.error('Erro ao buscar banco de leite:', erro));
+            .catch(erro => {
+                console.error('Erro ao buscar banco de leite:', erro);
+            });
     }
 
     function mostrarTodosBancos() {
@@ -129,7 +133,9 @@ export default function Home() {
     }
 
     function rolarParaSecao(id) {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById(id)?.scrollIntoView({
+            behavior: 'smooth'
+        });
     }
 
     return (
@@ -145,13 +151,30 @@ export default function Home() {
                 </div>
 
                 <nav className="menu-navegacao">
-                    <a href="#inicio" className="link-ativo">Início</a>
-                    <a href="#por-que-doar">Por que doar</a>
-                    <a href="#como-funciona">Como funciona</a>
-                    <a href="#servicos">Bancos de leite</a>
+                    <a href="#inicio" className="link-ativo">
+                        Início
+                    </a>
 
-                    <a href="#campanhas">Campanhas</a>
-<Link to="/quiz">Pré-triagem</Link>                </nav>
+                    <a href="#por-que-doar">
+                        Por que doar
+                    </a>
+
+                    <a href="#como-funciona">
+                        Como funciona
+                    </a>
+
+                    <a href="#servicos">
+                        Bancos de leite
+                    </a>
+
+                    <a href="#campanhas">
+                        Campanhas
+                    </a>
+
+                    <Link to="/quiz">
+                        Pré-triagem
+                    </Link>
+                </nav>
 
                 <div className="botoes-cabecalho">
                     {usuario ? (
@@ -161,14 +184,16 @@ export default function Home() {
                             </span>
 
                             <button
-                                className="btn-secondary btn-perfil"
+                                type="button"
+                                className="botao-secundario"
                                 onClick={() => navigate('/perfil')}
                             >
                                 Meu Perfil
                             </button>
 
                             <button
-                                className="btn-outline btn-sair"
+                                type="button"
+                                className="botao-contorno"
                                 onClick={handleLogout}
                             >
                                 Sair
@@ -177,6 +202,7 @@ export default function Home() {
                     ) : (
                         <>
                             <button
+                                type="button"
                                 className="botao-secundario"
                                 onClick={irParaLogin}
                             >
@@ -184,6 +210,7 @@ export default function Home() {
                             </button>
 
                             <button
+                                type="button"
                                 className="botao-principal"
                                 onClick={irParaCadastro}
                             >
@@ -196,11 +223,15 @@ export default function Home() {
 
             <section className="secao-destaque" id="inicio">
                 <div className="conteudo-destaque">
-                    <span className="etiqueta-projeto">PROJETO ACADÊMICO TCC</span>
+                    <span className="etiqueta-projeto">
+                        PROJETO ACADÊMICO TCC
+                    </span>
 
                     <h1>
-                        Seu leite pode transformar <br />
-                        pequenos começos em <br />
+                        Seu leite pode transformar
+                        <br />
+                        pequenos começos em
+                        <br />
                         <span>grandes histórias de vida.</span>
                     </h1>
 
@@ -211,6 +242,7 @@ export default function Home() {
 
                     <div className="botoes-destaque">
                         <button
+                            type="button"
                             className="botao-principal"
                             onClick={irParaCadastro}
                         >
@@ -218,6 +250,7 @@ export default function Home() {
                         </button>
 
                         <button
+                            type="button"
                             className="botao-contorno"
                             onClick={() => rolarParaSecao('como-funciona')}
                         >
@@ -227,6 +260,7 @@ export default function Home() {
 
                     <div className="selo-apoio">
                         <span className="ponto-decorativo">•</span>
+
                         <span>
                             Apoiando a Rede Brasileira de Bancos de Leite Humano (rBLH)
                         </span>
@@ -235,14 +269,17 @@ export default function Home() {
 
                 <div className="area-imagem-destaque">
                     <div className="moldura-imagem">
-                        <img src={heroImg} alt="Pezinho de uma bebê" />
+                        <img
+                            src={heroImg}
+                            alt="Pezinho de uma bebê"
+                        />
+
                         <div className="selo selo-seguranca"></div>
                     </div>
                 </div>
             </section>
 
             <section className="secao-indicadores">
-        
                 <h2>Força coletiva para salvar vidas</h2>
 
                 <div className="grade-indicadores">
@@ -277,7 +314,6 @@ export default function Home() {
             </section>
 
             <section className="secao-beneficios" id="por-que-doar">
-            
                 <h2>Por que doar leite materno?</h2>
 
                 <p className="descricao-secao">
@@ -287,15 +323,13 @@ export default function Home() {
 
                 <div className="grade-beneficios">
                     <div className="cartao-beneficio">
-            
                         <h3>Para o bebê</h3>
                         <p>
                             Contribui para a alimentação e o desenvolvimento de recém-nascidos,
                             especialmente prematuros e de baixo peso.
                         </p>
                     </div>
-
-                    <div className="cartao-beneficio">            
+                    <div className="cartao-beneficio">
                         <h3>Para a saúde</h3>
                         <p>
                             O leite humano contém nutrientes e componentes de defesa importantes
@@ -304,8 +338,8 @@ export default function Home() {
                     </div>
 
                     <div className="cartao-beneficio">
-                    
                         <h3>Para a sociedade</h3>
+
                         <p>
                             Cada quantidade doada importa e ajuda a fortalecer a rede de
                             solidariedade entre as famílias.
@@ -315,7 +349,10 @@ export default function Home() {
             </section>
 
             <section className="secao-como-funciona" id="como-funciona">
-                <span className="subtitulo-secao">PASSO A PASSO</span>
+                <span className="subtitulo-secao">
+                    PASSO A PASSO
+                </span>
+
                 <h2>Como funciona a doação?</h2>
 
                 <p className="descricao-secao">
@@ -344,6 +381,7 @@ export default function Home() {
 
                 <div className="caixa-informativa">
                     <span className="icone-informativo">ℹ</span>
+
                     <p>
                         <strong>Nota importante:</strong> As condições para doação devem ser
                         avaliadas e confirmadas pelo Banco de Leite e pelos profissionais de saúde responsáveis.
@@ -352,7 +390,10 @@ export default function Home() {
             </section>
 
             <section className="secao-localizacao" id="servicos">
-                <span className="subtitulo-secao">PROXIMIDADE</span>
+                <span className="subtitulo-secao">
+                    PROXIMIDADE
+                </span>
+
                 <h2>Encontre um Banco de Leite</h2>
 
                 <div className="conteudo-localizacao">
@@ -361,16 +402,22 @@ export default function Home() {
                             Digite o nome do banco ou o endereço:
                         </label>
 
-                        <form onSubmit={buscarBanco} className="formulario-busca">
+                        <form
+                            onSubmit={buscarBanco}
+                            className="formulario-busca"
+                        >
                             <input
                                 id="campo-busca"
                                 type="text"
                                 placeholder="Ex.: Campinas"
                                 value={busca}
-                                onChange={(e) => setBusca(e.target.value)}
+                                onChange={e => setBusca(e.target.value)}
                             />
 
-                            <button type="submit" className="botao-buscar">
+                            <button
+                                type="submit"
+                                className="botao-buscar"
+                            >
                                 Buscar
                             </button>
                         </form>
@@ -390,8 +437,12 @@ export default function Home() {
                                 </div>
 
                                 <div className="etiquetas-status">
-                                    <span className={`etiqueta-status ${banco.abertoHoje ? 'aberto' : ''}`}>
-                                        {banco.abertoHoje ? 'ABERTO HOJE' : 'HORÁRIO NÃO CONFIRMADO'}
+                                    <span
+                                        className={`etiqueta-status ${banco.abertoHoje ? 'aberto' : ''}`}
+                                    >
+                                        {banco.abertoHoje
+                                            ? 'ABERTO HOJE'
+                                            : 'HORÁRIO NÃO CONFIRMADO'}
                                     </span>
 
                                     {banco.coletaDomiciliar && (
@@ -479,7 +530,9 @@ export default function Home() {
             <section className="secao-campanha" id="campanhas">
                 <div className="cartao-campanha">
                     <div className="informacoes-campanha">
-                        <span className="etiqueta-campanha">CAMPANHA NACIONAL</span>
+                        <span className="etiqueta-campanha">
+                            CAMPANHA NACIONAL
+                        </span>
 
                         <h2>Doe Leite Materno: Vida em cada gota</h2>
 
@@ -490,6 +543,7 @@ export default function Home() {
 
                         <div className="acoes-campanha">
                             <button
+                                type="button"
                                 className="botao-principal"
                                 onClick={irParaCadastro}
                             >
@@ -497,6 +551,7 @@ export default function Home() {
                             </button>
 
                             <button
+                                type="button"
                                 className="botao-contorno"
                                 onClick={() => rolarParaSecao('servicos')}
                             >
@@ -505,8 +560,7 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="imagem-campanha">
-                    </div>
+                    <div className="imagem-campanha"></div>
                 </div>
             </section>
 
@@ -537,6 +591,7 @@ export default function Home() {
 
                         <div className="coluna-rodape">
                             <h4>Parceiros oficiais</h4>
+
                             <a
                                 href="https://rblh.fiocruz.br/"
                                 target="_blank"
@@ -544,6 +599,7 @@ export default function Home() {
                             >
                                 Rede Brasileira rBLH
                             </a>
+
                             <a
                                 href="https://www.gov.br/saude"
                                 target="_blank"
@@ -551,6 +607,7 @@ export default function Home() {
                             >
                                 Ministério da Saúde
                             </a>
+
                             <a
                                 href="https://portal.fiocruz.br/"
                                 target="_blank"
@@ -565,6 +622,7 @@ export default function Home() {
                 <div className="parte-inferior-rodape">
                     <div>
                         <strong>Laços Maternos</strong>
+
                         <p>
                             Projeto acadêmico desenvolvido para fins de Trabalho de
                             Conclusão de Curso (TCC). Sem fins lucrativos.

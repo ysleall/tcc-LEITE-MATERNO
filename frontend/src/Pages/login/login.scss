@@ -13,7 +13,6 @@ $card-bg: #ffffff;
   background-color: #ffffff;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
 
-  // Lado Esquerdo: Área visual com fundo suave, círculos e foto
   .login-visual-side {
     flex: 1.1;
     background: linear-gradient(135deg, #fcf8f9 0%, #f4fbf7 100%);
@@ -25,7 +24,6 @@ $card-bg: #ffffff;
     position: relative;
     overflow: hidden;
 
-    // Círculos pastel decorativos de fundo
     .decorative-circle {
       position: absolute;
       border-radius: 50%;
@@ -83,7 +81,7 @@ $card-bg: #ffffff;
     }
   }
 
-  // Lado Direito: Formulário de Login
+
   .login-form-side {
     flex: 0.9;
     display: flex;
@@ -255,7 +253,7 @@ $card-bg: #ffffff;
     }
   }
 
-  // Responsividade para smartphones
+  
   @media (max-width: 900px) {
     flex-direction: column;
 
@@ -267,5 +265,39 @@ $card-bg: #ffffff;
       padding: 40px 24px;
       min-height: 100vh;
     }
+  }
+}
+
+
+.login-success-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border: 1px solid #f5c6d5;
+  border-radius: 12px;
+  background: #fff0f5;
+  color: #c94f7b;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  animation: aparecerSucesso 0.4s ease;
+}
+
+.success-heart {
+  font-size: 22px;
+  color: #e65b8b;
+}
+
+@keyframes aparecerSucesso {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

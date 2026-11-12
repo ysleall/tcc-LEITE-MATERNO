@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './Cadastro.scss';
@@ -20,58 +21,62 @@ export default function Cadastro() {
   const [mensagemSucesso, setMensagemSucesso] = useState('');
 
   async function cadastrarDoadora(e) {
-  e.preventDefault();
-  setMensagemErro('');
-  setMensagemSucesso('');
+    e.preventDefault();
+    setMensagemErro('');
+    setMensagemSucesso('');
 
-  if (!concordaTermos) {
-    setMensagemErro('Você precisa aceitar os termos e a política de privacidade.');
-    return;
-  }
-
-  const cpfFormatado = cpf.replace(/\D/g, '');
-  if (cpfFormatado.length !== 11) {
-    setMensagemErro('Por favor, informe um CPF válido com 11 dígitos.');
-    return;
-  }
-
-  try {
-    setCarregando(true);
-    const resposta = await fetch('http://localhost:2026/api/auth/cadastro', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({
-        nome,
-        email,
-        cpf: cpfFormatado,
-        telefone,
-        data_nascimento: dataNascimento,
-        senha,
-        cep,
-        cidade
-      })
-    });
-
-    const dados = await resposta.json();
-
-    if (resposta.ok) {
-      setMensagemSucesso('Conta criada com sucesso! Redirecionando para o login...');
-      setTimeout(() => {
-        navigate('/login');
-      }, 1500);
-    } else {
-      const erroServidor = dados.mensagem || dados.message || dados.error || 'Erro ao realizar cadastro.';
-      setMensagemErro(erroServidor);
+    if (!concordaTermos) {
+      setMensagemErro('Você precisa aceitar os termos e a política de privacidade.');
+      return;
     }
-  } catch (erro) {
-    setMensagemErro('Não foi possível conectar ao servidor backend.');
-  } finally {
-    setCarregando(false);
+
+    const cpfFormatado = cpf.replace(/\D/g, '');
+
+    if (cpfFormatado.length !== 11) {
+      setMensagemErro('Por favor, informe um CPF válido com 11 dígitos.');
+      return;
+    }
+
+    try {
+      setCarregando(true);
+
+      const resposta = await fetch('http://localhost:2027/api/auth/cadastro', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          nome,
+          email,
+          cpf: cpfFormatado,
+          telefone,
+          data_nascimento: dataNascimento,
+          senha,
+          cep,
+          cidade
+        })
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        setMensagemSucesso('Conta criada com sucesso! Redirecionando para o login');
+
+        setTimeout(() => {
+          navigate('/login');
+        }, 1500);
+      } else {
+        const erroServidor = dados.mensagem || dados.message || dados.error || 'Erro ao realizar cadastro.';
+        setMensagemErro(erroServidor);
+      }
+    } catch (erro) {
+      console.error('Erro ao cadastrar doadora:', erro);
+      setMensagemErro('Não foi possível conectar ao servidor backend.');
+    } finally {
+      setCarregando(false);
+    }
   }
-}
 
   return (
     <div className="cadastro-page">
@@ -90,25 +95,34 @@ export default function Cadastro() {
       <div className="cadastro-form-side">
         <div className="form-wrapper">
           <div className="cadastro-header">
-            <img 
-              src={logoImg} 
-              alt="Laços Maternos" 
-              className="cadastro-logo" 
+            <img
+              src={logoImg}
+              alt="Laços Maternos"
+              className="cadastro-logo"
               onClick={() => navigate('/')}
             />
             <h2>Crie sua conta de doadora</h2>
             <p>Preencha os campos abaixo para iniciar seu cadastro em nossa rede de apoio.</p>
           </div>
 
-          {mensagemErro && <div className="feedback-msg error">{mensagemErro}</div>}
-          {mensagemSucesso && <div className="feedback-msg success">{mensagemSucesso}</div>}
+          {mensagemErro && (
+            <div className="feedback-msg error">
+              {mensagemErro}
+            </div>
+          )}
+
+          {mensagemSucesso && (
+            <div className="feedback-msg success">
+              {mensagemSucesso}
+            </div>
+          )}
 
           <form onSubmit={cadastrarDoadora} className="cadastro-form">
             <div className="input-group">
               <label htmlFor="nome">Nome completo</label>
-              <input 
+              <input
                 id="nome"
-                type="text" 
+                type="text"
                 placeholder="Ex: Maria Silva de Oliveira"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
@@ -118,9 +132,9 @@ export default function Cadastro() {
 
             <div className="input-group">
               <label htmlFor="email">E-mail</label>
-              <input 
+              <input
                 id="email"
-                type="email" 
+                type="email"
                 placeholder="exemplo@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -131,9 +145,9 @@ export default function Cadastro() {
             <div className="form-row">
               <div className="input-group">
                 <label htmlFor="senha">Senha</label>
-                <input 
+                <input
                   id="senha"
-                  type="password" 
+                  type="password"
                   placeholder="Crie uma senha forte"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
@@ -143,9 +157,9 @@ export default function Cadastro() {
 
               <div className="input-group">
                 <label htmlFor="nascimento">Data de nascimento</label>
-                <input 
+                <input
                   id="nascimento"
-                  type="date" 
+                  type="date"
                   value={dataNascimento}
                   onChange={(e) => setDataNascimento(e.target.value)}
                   required
@@ -156,9 +170,9 @@ export default function Cadastro() {
             <div className="form-row">
               <div className="input-group">
                 <label htmlFor="telefone">Telefone / WhatsApp</label>
-                <input 
+                <input
                   id="telefone"
-                  type="text" 
+                  type="text"
                   placeholder="(11) 99999-9999"
                   value={telefone}
                   onChange={(e) => setTelefone(e.target.value)}
@@ -168,9 +182,9 @@ export default function Cadastro() {
 
               <div className="input-group">
                 <label htmlFor="cpf">CPF</label>
-                <input 
+                <input
                   id="cpf"
-                  type="text" 
+                  type="text"
                   placeholder="000.000.000-00"
                   value={cpf}
                   onChange={(e) => setCpf(e.target.value)}
@@ -182,10 +196,10 @@ export default function Cadastro() {
             <div className="form-row">
               <div className="input-group">
                 <label htmlFor="cep">CEP</label>
-                <input 
+                <input
                   id="cep"
-                  type="text" 
-                  placeholder="00000-000" 
+                  type="text"
+                  placeholder="00000-000"
                   value={cep}
                   onChange={(e) => setCep(e.target.value)}
                 />
@@ -193,9 +207,9 @@ export default function Cadastro() {
 
               <div className="input-group">
                 <label htmlFor="cidade">Cidade</label>
-                <input 
+                <input
                   id="cidade"
-                  type="text" 
+                  type="text"
                   placeholder="Cidade onde reside"
                   value={cidade}
                   onChange={(e) => setCidade(e.target.value)}
@@ -204,9 +218,9 @@ export default function Cadastro() {
             </div>
 
             <div className="checkbox-group">
-              <input 
-                id="termos" 
-                type="checkbox" 
+              <input
+                id="termos"
+                type="checkbox"
                 checked={concordaTermos}
                 onChange={(e) => setConcordaTermos(e.target.checked)}
                 required
@@ -216,7 +230,11 @@ export default function Cadastro() {
               </label>
             </div>
 
-            <button type="submit" className="btn-cadastro-submit" disabled={carregando}>
+            <button
+              type="submit"
+              className="btn-cadastro-submit"
+              disabled={carregando || !!mensagemSucesso}
+            >
               {carregando ? 'Cadastrando...' : 'Criar minha conta'}
             </button>
           </form>
