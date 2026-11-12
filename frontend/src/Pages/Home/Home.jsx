@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 
@@ -18,7 +17,6 @@ import './Home.scss';
 import logoImg from '../../assets/lacomaterno.png';
 import heroImg from '../../assets/amarmentar.png';
 
-
 delete L.Icon.Default.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
@@ -31,36 +29,17 @@ function AjustarMapa({ bancos }) {
     const mapa = useMap();
 
     useEffect(() => {
-        let pontos = [];
-
-        for (let banco of bancos) {
-            if (banco.latitude != null && banco.longitude != null) {
-                pontos.push([
-                    Number(banco.latitude),
-                    Number(banco.longitude)
-                ]);
-            }
-        }
-
-        let pontosUnicos = [];
-
-        for (let ponto of pontos) {
-            let existe = pontosUnicos.some(item =>
-                item[0] === ponto[0] && item[1] === ponto[1]
+        const pontos = bancos
+            .filter(banco => banco.latitude != null && banco.longitude != null)
+            .map(banco => [Number(banco.latitude), Number(banco.longitude)])
+            .filter(([latitude, longitude]) =>
+                Number.isFinite(latitude) && Number.isFinite(longitude)
             );
 
-            if (!existe) {
-                pontosUnicos.push(ponto);
-            }
-        }
-
-        if (pontosUnicos.length === 1) {
-            mapa.setView(pontosUnicos[0], 14);
-        } else if (pontosUnicos.length > 1) {
-            mapa.fitBounds(pontosUnicos, {
-                padding: [30, 30],
-                maxZoom: 14
-            });
+        if (pontos.length === 1) {
+            mapa.setView(pontos[0], 14);
+        } else if (pontos.length > 1) {
+            mapa.fitBounds(pontos, { padding: [30, 30], maxZoom: 14 });
         } else {
             mapa.setView([-22.8932, -47.0543], 6);
         }
@@ -94,22 +73,25 @@ export default function Home() {
         }
 
         api.get('/admin/dashboard')
+            .then(res => setDashboard(res.data))
+            .catch(erro => console.error('Erro ao carregar o dashboard:', erro));
+
+        carregarBancos();
+    }, []);
+
+    function carregarBancos() {
+        api.get('/banco-leite')
             .then(res => {
-                setDashboard(res.data);
+                const lista = Array.isArray(res.data) ? res.data : [];
+                setBancos(lista);
+                setTotalBancos(lista.length);
             })
             .catch(erro => {
-                console.log('Erro ao carregar o dashboard:', erro);
+                console.error('Erro ao carregar os bancos de leite:', erro);
+                setBancos([]);
+                setTotalBancos(0);
             });
-
-        api.get('/banco-leite')
-           .then(res => {
-    setBancos(res.data);
-    setTotalBancos(res.data.length);
-})
-            .catch(erro => {
-                console.log('Erro ao carregar os bancos de leite:', erro);
-            });
-    }, []);
+    }
 
     function irParaLogin() {
         navigate('/login');
@@ -123,7 +105,6 @@ export default function Home() {
         localStorage.removeItem('@lacos:token');
         localStorage.removeItem('@lacos:doadora');
         localStorage.removeItem('usuario');
-
         setUsuario(null);
         navigate('/');
     }
@@ -132,38 +113,23 @@ export default function Home() {
         e.preventDefault();
 
         api.get('/banco-leite', {
-            params: {
-                busca: busca
-            }
+            params: { busca: busca.trim() }
         })
             .then(res => {
-                setBancos(res.data);
+                const lista = Array.isArray(res.data) ? res.data : [];
+                setBancos(lista);
+                setTotalBancos(lista.length);
             })
-            .catch(erro => {
-                console.log('Erro ao buscar banco de leite:', erro);
-            });
+            .catch(erro => console.error('Erro ao buscar banco de leite:', erro));
     }
 
     function mostrarTodosBancos() {
         setBusca('');
-
-        api.get('/banco-leite')
-            .then(res => {
-                setBancos(res.data);
-            })
-            .catch(erro => {
-                console.log('Erro ao carregar os bancos:', erro);
-            });
+        carregarBancos();
     }
 
     function rolarParaSecao(id) {
-        const elemento = document.getElementById(id);
-
-        if (elemento) {
-            elemento.scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     }
 
     return (
@@ -612,7 +578,6 @@ export default function Home() {
                     </div>
                 </div>
             </footer>
-
         </div>
     );
 }
