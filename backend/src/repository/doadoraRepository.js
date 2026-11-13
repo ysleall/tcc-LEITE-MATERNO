@@ -1,6 +1,5 @@
 import { con } from '../config/connection.js';
 
-// CADASTRAR DOADORA
 export async function saveDoadora(doadora) {
     const command = `
         INSERT INTO doadoras
@@ -22,7 +21,6 @@ export async function saveDoadora(doadora) {
     return result.insertId;
 }
 
-// LISTAR TODAS AS DOADORAS
 export async function listDoadoras() {
     const command = `
         SELECT id, nome, email, cpf, telefone,
@@ -35,7 +33,6 @@ export async function listDoadoras() {
     return linhas;
 }
 
-// BUSCAR DOADORA POR ID
 export async function getDoadora(id) {
     const command = `
         SELECT id, nome, email, cpf, telefone,
@@ -48,7 +45,6 @@ export async function getDoadora(id) {
     return linhas[0];
 }
 
-// BUSCAR DOADORA PELO EMAIL PARA LOGIN
 export async function getDoadoraLogin(email) {
     const command = `
         SELECT id, nome, email, senha, status
@@ -61,7 +57,6 @@ export async function getDoadoraLogin(email) {
     return linhas[0];
 }
 
-// ATUALIZAR DOADORA
 export async function updateDoadora(id, doadora) {
     const command = `
         UPDATE doadoras
@@ -89,7 +84,6 @@ export async function updateDoadora(id, doadora) {
     return result.affectedRows;
 }
 
-// DELETAR DOADORA
 export async function deleteDoadora(id) {
     const command = `
         DELETE FROM doadoras

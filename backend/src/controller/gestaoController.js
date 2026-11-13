@@ -1,22 +1,37 @@
-import * as dbDoadoras from '../repository/gestaoRepository.js';
 
-import { Router } from "express";
+import * as dbDoadoras from '../repository/gestaoRepository.js';
+import { Router } from 'express';
+import autenticarAdmin from '../middleware/autenticarAdmin.js';
 
 const endpoints = Router();
 
+endpoints.get('/admin/doadoras', autenticarAdmin, async (req, resp) => {
+    try {
+        const doadoras = await dbDoadoras.listDoadoras();
 
-endpoints.get('/admin/doadoras', async (req, resp) => {
+        return resp.send(doadoras);
+    } catch (erro) {
+        console.error(erro);
 
-    let doadoras = await dbDoadoras.listDoadoras();
-
-    for (let doadora of doadoras) {
-
-        let volume = await dbDoadoras.getVolumeDoado(doadora.id);
-
-        doadora.volume_doado_ml = Number(volume.volume_doado_ml || 0);
+        return resp.status(500).send({
+            mensagem: 'Erro ao listar doadoras.'
+        });
     }
+});
 
-    resp.send(doadoras);
+endpoints.get('/admin/resumo', autenticarAdmin, async (req, resp) => {
+    try {
+        const resumo = await dbDoadoras.getResumoGestao();
+
+        return resp.send(resumo);
+    } catch (erro) {
+        console.error(erro);
+
+        return resp.status(500).send({
+            mensagem: 'Erro ao buscar resumo da gestão.'
+        });
+    }
 });
 
 export default endpoints;
+

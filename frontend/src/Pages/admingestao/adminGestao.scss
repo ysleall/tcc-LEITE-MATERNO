@@ -1,0 +1,174 @@
+
+.pagina-admin-gestao {
+    min-height: 100vh;
+    background: #fffaf9;
+    color: #422b32;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.cabecalho-gestao {
+    min-height: 80px;
+    padding: 15px 6%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    border-bottom: 1px solid #eadfe1;
+}
+
+.cabecalho-gestao h1 {
+    margin: 0;
+    color: #824e60;
+    font-size: 25px;
+}
+
+.cabecalho-gestao p {
+    margin: 5px 0 0;
+    color: #796b70;
+    font-size: 14px;
+}
+
+.cabecalho-gestao button {
+    padding: 10px 22px;
+    border: 1px solid #824e60;
+    border-radius: 7px;
+    background: #824e60;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.conteudo-gestao {
+    width: 88%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 35px 0;
+}
+
+.titulo-gestao h2 {
+    margin: 0;
+    font-size: 27px;
+    color: #422b32;
+}
+
+.titulo-gestao p {
+    margin: 9px 0 25px;
+    color: #796b70;
+}
+
+.resumo-gestao {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 35px;
+}
+
+.cartao-resumo {
+    min-height: 115px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ffffff;
+    border: 1px solid #eadfe1;
+    border-radius: 10px;
+}
+
+.cartao-resumo span {
+    color: #796b70;
+    font-size: 14px;
+}
+
+.cartao-resumo strong {
+    color: #824e60;
+    font-size: 25px;
+}
+
+.secao-doadoras {
+    padding: 25px;
+    background: #ffffff;
+    border: 1px solid #eadfe1;
+    border-radius: 10px;
+}
+
+.secao-doadoras h3 {
+    margin: 0 0 22px;
+    font-size: 21px;
+}
+
+.tabela-responsiva {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabela-responsiva table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabela-responsiva th,
+.tabela-responsiva td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #eee5e7;
+    font-size: 14px;
+}
+
+.tabela-responsiva th {
+    color: #824e60;
+    background: #fff8f7;
+}
+
+.status-doadora {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #f2eeee;
+    color: #66545b;
+    font-size: 12px;
+}
+
+.status-doadora.ativa,
+.status-doadora.ativo {
+    background: #e8f4eb;
+    color: #287342;
+}
+
+.status-doadora.inativa,
+.status-doadora.inativo {
+    background: #f8e9e9;
+    color: #a33c3c;
+}
+
+.sem-doadoras,
+.mensagem-carregamento {
+    color: #796b70;
+}
+
+.erro-gestao {
+    margin: 15px 0;
+    color: #bd3434;
+}
+
+@media (max-width: 850px) {
+    .resumo-gestao {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    .conteudo-gestao {
+        width: 92%;
+    }
+
+    .resumo-gestao {
+        grid-template-columns: 1fr;
+    }
+
+    .secao-doadoras {
+        padding: 15px;
+    }
+
+    .cabecalho-gestao {
+        padding: 15px 4%;
+    }
+}

@@ -1,10 +1,10 @@
+
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import * as dbDoadora from '../repository/doadoraRepository.js';
 
 const endpoints = express.Router();
-
 
 function autenticar(req, res, next) {
     const autorizacao = req.headers.authorization;
@@ -30,7 +30,6 @@ function autenticar(req, res, next) {
         });
     }
 }
-
 
 endpoints.post('/api/doadoras', async (req, res) => {
     try {
@@ -100,7 +99,6 @@ endpoints.post('/api/doadoras', async (req, res) => {
     }
 });
 
-// LISTAR TODAS AS DOADORAS
 endpoints.get('/api/doadoras', autenticar, async (req, res) => {
     try {
         const doadoras = await dbDoadora.listDoadoras();
@@ -115,7 +113,109 @@ endpoints.get('/api/doadoras', autenticar, async (req, res) => {
     }
 });
 
-// BUSCAR DOADORA PELO ID
+endpoints.get('/api/doadoras/perfil', autenticar, async (req, res) => {
+    try {
+        const id = Number(req.usuario.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(401).send({
+                mensagem: 'Identificação da doadora inválida.'
+            });
+        }
+
+        const doadora = await dbDoadora.getDoadora(id);
+
+        if (!doadora) {
+            return res.status(404).send({
+                mensagem: 'Doadora não encontrada.'
+            });
+        }
+
+        return res.send(doadora);
+    } catch (erro) {
+        console.error(erro);
+
+        return res.status(500).send({
+            mensagem: 'Erro ao buscar perfil.'
+        });
+    }
+});
+
+endpoints.put('/api/doadoras/perfil', autenticar, async (req, res) => {
+    try {
+        const id = Number(req.usuario.id);
+
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(401).send({
+                mensagem: 'Identificação da doadora inválida.'
+            });
+        }
+
+        const {
+            nome,
+            email,
+            cpf,
+            telefone,
+            data_nascimento
+        } = req.body;
+
+        if (
+            !nome || !email || !cpf ||
+            !telefone || !data_nascimento
+        ) {
+            return res.status(400).send({
+                mensagem: 'Preencha todos os campos.'
+            });
+        }
+
+        if (!/^\d{11}$/.test(cpf)) {
+            return res.status(400).send({
+                mensagem: 'O CPF deve conter 11 números.'
+            });
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            return res.status(400).send({
+                mensagem: 'Informe um e-mail válido.'
+            });
+        }
+
+        const existente = await dbDoadora.getDoadora(id);
+
+        if (!existente) {
+            return res.status(404).send({
+                mensagem: 'Doadora não encontrada.'
+            });
+        }
+
+        await dbDoadora.updateDoadora(id, {
+            nome,
+            email,
+            cpf,
+            telefone,
+            data_nascimento,
+            cep: existente.cep,
+            cidade: existente.cidade
+        });
+
+        return res.send({
+            mensagem: 'Dados atualizados com sucesso!'
+        });
+    } catch (erro) {
+        if (erro.code === 'ER_DUP_ENTRY') {
+            return res.status(409).send({
+                mensagem: 'E-mail ou CPF já cadastrado.'
+            });
+        }
+
+        console.error(erro);
+
+        return res.status(500).send({
+            mensagem: 'Erro ao atualizar perfil.'
+        });
+    }
+});
+
 endpoints.get('/api/doadoras/:id', autenticar, async (req, res) => {
     try {
         const id = Number(req.params.id);
@@ -126,7 +226,7 @@ endpoints.get('/api/doadoras/:id', autenticar, async (req, res) => {
             });
         }
 
-        if (req.usuario.id !== id) {
+        if (Number(req.usuario.id) !== id) {
             return res.status(403).send({
                 mensagem: 'Você não pode acessar esse cadastro.'
             });
@@ -150,7 +250,6 @@ endpoints.get('/api/doadoras/:id', autenticar, async (req, res) => {
     }
 });
 
-// ATUALIZAR DOADORA
 endpoints.put('/api/doadoras/:id', autenticar, async (req, res) => {
     try {
         const id = Number(req.params.id);
@@ -161,7 +260,7 @@ endpoints.put('/api/doadoras/:id', autenticar, async (req, res) => {
             });
         }
 
-        if (req.usuario.id !== id) {
+        if (Number(req.usuario.id) !== id) {
             return res.status(403).send({
                 mensagem: 'Você não pode alterar esse cadastro.'
             });
@@ -209,7 +308,9 @@ endpoints.put('/api/doadoras/:id', autenticar, async (req, res) => {
             email,
             cpf,
             telefone,
-            data_nascimento
+            data_nascimento,
+            cep: existente.cep,
+            cidade: existente.cidade
         });
 
         return res.send({
@@ -230,7 +331,6 @@ endpoints.put('/api/doadoras/:id', autenticar, async (req, res) => {
     }
 });
 
-
 endpoints.delete('/api/doadoras/:id', autenticar, async (req, res) => {
     try {
         const id = Number(req.params.id);
@@ -241,7 +341,7 @@ endpoints.delete('/api/doadoras/:id', autenticar, async (req, res) => {
             });
         }
 
-        if (req.usuario.id !== id) {
+        if (Number(req.usuario.id) !== id) {
             return res.status(403).send({
                 mensagem: 'Você não pode excluir esse cadastro.'
             });

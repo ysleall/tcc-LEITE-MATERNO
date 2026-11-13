@@ -1,0 +1,351 @@
+
+
+.pagina-perfil {
+    min-height: 100vh;
+    padding: 35px 7%;
+    background: #fff9f8;
+    color: #50343d;
+    font-family: Arial, Helvetica, sans-serif;
+
+    .cabecalho-perfil {
+        text-align: center;
+        margin-bottom: 30px;
+
+        h1 {
+            margin: 18px 0 8px;
+            color: #8f5367;
+            font-size: 32px;
+        }
+
+        p {
+            color: #927780;
+        }
+    }
+
+    .botao-voltar {
+        display: block;
+        border: none;
+        background: transparent;
+        color: #965b70;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    .cartao-perfil {
+        max-width: 950px;
+        margin: 22px auto;
+        padding: 25px;
+        background: #fff;
+        border: 1px solid #f1dfe4;
+        border-radius: 18px;
+        box-shadow: 0 5px 18px rgba(120, 70, 85, 0.06);
+
+        h2 {
+            margin: 0 0 8px;
+            color: #875064;
+        }
+
+        > p {
+            color: #927780;
+            margin-bottom: 20px;
+        }
+    }
+
+    .identificacao-doadora {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+
+        h2 {
+            margin: 0 0 6px;
+        }
+
+        p {
+            margin: 0 0 6px;
+            color: #927780;
+        }
+
+        span {
+            color: #b17b8d;
+            font-size: 13px;
+        }
+    }
+
+    .avatar-atual {
+        width: 85px;
+        height: 85px;
+        display: grid;
+        place-items: center;
+        border-radius: 50%;
+        background: #fff0f3;
+        color: #a65e79;
+        font-size: 35px;
+        font-weight: bold;
+    }
+
+    .escolha-avatar {
+        margin-top: 25px;
+
+        h3 {
+            color: #875064;
+            font-size: 16px;
+        }
+    }
+
+    .lista-avatares {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .opcao-avatar {
+        min-width: 85px;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid #f0dce2;
+        border-radius: 13px;
+        background: #fffafa;
+        cursor: pointer;
+
+        span {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: #f9e5eb;
+            color: #965b70;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        small {
+            color: #805365;
+        }
+
+        &.selecionado {
+            border: 2px solid #c77e98;
+            background: #fff0f4;
+        }
+    }
+
+    .estatisticas-perfil {
+        max-width: 950px;
+        margin: 22px auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+    }
+
+    .cartao-estatistica {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid #f1dfe4;
+        border-radius: 18px;
+        background: #fff;
+
+        strong {
+            color: #a65e79;
+            font-size: 25px;
+        }
+
+        p {
+            margin: 0;
+            color: #927780;
+            text-align: center;
+        }
+    }
+
+    .titulo-secao {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+
+        p {
+            margin: 5px 0 0;
+            color: #927780;
+        }
+    }
+
+    .formulario-perfil {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 17px;
+
+        label {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            color: #805365;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ead5dc;
+            border-radius: 9px;
+            outline: none;
+            background: #fffafa;
+            color: #50343d;
+            font-size: 14px;
+
+            &:focus {
+                border-color: #c77e98;
+            }
+
+            &:disabled {
+                background: #faf5f6;
+                color: #806d73;
+            }
+        }
+    }
+
+    .formulario-doacao {
+        align-items: end;
+
+        .botao-principal {
+            align-self: end;
+        }
+    }
+
+    .botao-principal,
+    .botao-secundario {
+        padding: 12px 20px;
+        border-radius: 9px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .botao-principal {
+        border: none;
+        background: #b86f88;
+        color: #fff;
+
+        &:hover {
+            background: #9f5872;
+        }
+    }
+
+    .botao-secundario {
+        border: 1px solid #c98da1;
+        background: #fff;
+        color: #965b70;
+    }
+
+    .mensagem-perfil,
+    .erro-perfil {
+        max-width: 950px;
+        margin: 12px auto;
+        padding: 12px;
+        border-radius: 9px;
+        text-align: center;
+    }
+
+    .mensagem-perfil {
+        background: #edf8ef;
+        color: #386b43;
+    }
+
+    .erro-perfil {
+        background: #fff0f0;
+        color: #a33d48;
+    }
+
+    .texto-vazio {
+        padding: 15px 0;
+        color: #927780;
+    }
+
+    .item-doacao {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 15px 0;
+        border-bottom: 1px solid #f2e5e9;
+
+        strong {
+            color: #a65e79;
+        }
+
+        p {
+            margin: 5px 0 0;
+            color: #927780;
+            font-size: 13px;
+        }
+
+        > span {
+            color: #806d73;
+        }
+    }
+
+    .item-mensal {
+        margin: 18px 0;
+    }
+
+    .informacao-mes {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+        color: #805365;
+
+        strong {
+            color: #a65e79;
+        }
+    }
+
+    .fundo-barra {
+        height: 11px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #f7e8ed;
+    }
+
+    .barra-mensal {
+        height: 100%;
+        border-radius: 20px;
+        background: #c77e98;
+        transition: width 0.3s ease;
+    }
+}
+
+.pagina-perfil-carregando {
+    padding: 80px 20px;
+    color: #875064;
+    text-align: center;
+}
+
+@media (max-width: 650px) {
+    .pagina-perfil {
+        padding: 25px 16px;
+
+        .estatisticas-perfil,
+        .formulario-perfil {
+            grid-template-columns: 1fr;
+        }
+
+        .titulo-secao {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .identificacao-doadora {
+            align-items: flex-start;
+        }
+
+        .item-doacao {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+    }
+}
