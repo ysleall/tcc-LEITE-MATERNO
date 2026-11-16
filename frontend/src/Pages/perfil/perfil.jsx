@@ -5,11 +5,11 @@ import api from '../../services/api';
 import './perfil.scss';
 
 const avatares = [
-    { id: 'flor', nome: 'Flor', simbolo: 'F' },
-    { id: 'lua', nome: 'Lua', simbolo: 'L' },
-    { id: 'nuvem', nome: 'Nuvem', simbolo: 'N' },
-    { id: 'estrela', nome: 'Estrela', simbolo: 'E' },
-    { id: 'coracao', nome: 'Coração', simbolo: 'C' }
+    { id: 'flor', nome: 'Flor', simbolo: '🌺​' },
+    { id: 'lua', nome: 'Lua', simbolo: '​🌙​' },
+    { id: 'nuvem', nome: 'Nuvem', simbolo: '​​☁️' },
+    { id: 'estrela', nome: 'Estrela', simbolo: '⭐​' },
+    { id: 'coracao', nome: 'Coração', simbolo: '​💗' }
 ];
 
 function Perfil() {
@@ -159,30 +159,47 @@ function Perfil() {
         }
     }
 
-    async function escolherAvatar(avatar) {
-        try {
-            setErro('');
-            setMensagem('');
+async function escolherAvatar(avatar) {
+    try {
+        setErro('');
+        setMensagem('');
 
-            await api.put('/api/doadoras/perfil', {
-                ...dados,
+        const resposta = await api.put('/api/doadoras/perfil', {
+            ...dados,
+            avatar
+        });
+
+        setDados((dadosAtuais) => ({
+            ...dadosAtuais,
+            avatar
+        }));
+
+        const doadoraSalva = JSON.parse(
+            localStorage.getItem('@lacos:doadora') || '{}'
+        );
+
+        const doadoraAtualizada =
+            resposta.data.doadora || resposta.data;
+
+        localStorage.setItem(
+            '@lacos:doadora',
+            JSON.stringify({
+                ...doadoraSalva,
+                ...doadoraAtualizada,
                 avatar
-            });
+            })
+        );
 
-            setDados((dadosAtuais) => ({
-                ...dadosAtuais,
-                avatar
-            }));
+        setMensagem('Avatar atualizado com sucesso.');
 
-            setMensagem('Avatar atualizado com sucesso.');
-
-        } catch (erroResposta) {
-            setErro(
-                erroResposta.response?.data?.mensagem ||
-                'Não foi possível atualizar o avatar.'
-            );
-        }
+    } catch (erroResposta) {
+        setErro(
+            erroResposta.response?.data?.mensagem ||
+            'Não foi possível atualizar o avatar.'
+        );
     }
+}
+
 
     async function registrarDoacao(evento) {
         evento.preventDefault();

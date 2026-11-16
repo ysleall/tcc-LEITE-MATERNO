@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
 
+
 import {
     MapContainer,
     TileLayer,
@@ -17,6 +18,8 @@ import L from 'leaflet';
 import './Home.scss';
 import logoImg from '../../assets/lacomaterno.png';
 import heroImg from '../../assets/nenememae.jpg';
+import amamentarImg from '../../assets/amamentar.jpg';
+import nenem from '../../assets/nenem.jpg';
 
 delete L.Icon.Default.prototype._getIconUrl;
 
@@ -48,7 +51,13 @@ function AjustarMapa({ bancos }) {
 
     return null;
 }
-
+const iconesAvatar = {
+    flor: '🌺',
+    lua: '🌙',
+    nuvem: '☁️',
+    estrela: '⭐',
+    coracao: '💗'
+};
 export default function Home() {
     const navigate = useNavigate();
 
@@ -178,27 +187,35 @@ export default function Home() {
 
                 <div className="botoes-cabecalho">
                     {usuario ? (
-                        <div className="menu-usuario">
-                            <span className="nome-usuario">
-                                Olá, <strong>{usuario.nome?.split(' ')[0] || 'Doadora'}</strong>
-                            </span>
+                        
+<div className="menu-usuario">
 
-                            <button
-                                type="button"
-                                className="botao-secundario"
-                                onClick={() => navigate('/perfil')}
-                            >
-                                Meu Perfil
-                            </button>
+    <button
+        type="button"
+        className="botao-secundario"
+        onClick={() => navigate('/perfil')}
+    >
+        Meu Perfil
+    </button>
 
-                            <button
-                                type="button"
-                                className="botao-contorno"
-                                onClick={handleLogout}
-                            >
-                                Sair
-                            </button>
-                        </div>
+    <span className="nome-usuario">
+        Olá, <strong>{usuario.nome?.split(' ')[0] || 'Doadora'}</strong>
+    </span>
+
+    <div className="avatar-cabecalho">
+        {iconesAvatar[usuario?.avatar || 'flor']}
+    </div>
+
+    <button
+        type="button"
+        className="botao-contorno"
+        onClick={handleLogout}
+    >
+        Sair
+    </button>
+
+</div>
+
                     ) : (
                         <>
                             <button
@@ -387,6 +404,23 @@ export default function Home() {
                         avaliadas e confirmadas pelo Banco de Leite e pelos profissionais de saúde responsáveis.
                     </p>
                 </div>
+                <a
+    href="https://www.gov.br/hubrasil/pt-br/hospitais-universitarios/regiao-sul/hu-ufsc/governanca/estrutura-administrativa/saude/maternidade/central-de-incentivo-ao-aleitamento-materno/extracao-e-armazenamento-do-leite-humano"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="card-material"
+>
+    <img
+        src={nenem}
+        alt="Extração e armazenamento do leite humano"
+    />
+
+    <div>
+        <h3>Extração e Armazenamento do Leite Humano</h3>
+        <p>Confira as orientações oficiais do HU-UFSC.</p>
+        <span>Acessar material ↗</span>
+    </div>
+</a>
             </section>
 
             <section className="secao-localizacao" id="servicos">
@@ -560,8 +594,10 @@ export default function Home() {
                         </div>
                     </div>
 
-                    <div className="imagem-campanha"></div>
-                </div>
+<div className="imagem-campanha">
+    <img src={amamentarImg} alt="Amamentação e doação de leite materno" />
+    
+</div>                </div>
             </section>
 
             <footer className="rodape">
@@ -629,11 +665,7 @@ export default function Home() {
                         </p>
                     </div>
 
-                    <div className="apoio-institucional">
-                        <span>APOIO INSTITUCIONAL:</span>
-                        <strong>SUS</strong>
-                        <strong>FIOCRUZ</strong>
-                    </div>
+                   
                 </div>
             </footer>
         </div>
