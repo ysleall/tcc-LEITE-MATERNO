@@ -1,15 +1,15 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import './perfil.scss';
 
 const avatares = [
-    { id: 'flor', nome: 'Flor', simbolo: '🌺​' },
-    { id: 'lua', nome: 'Lua', simbolo: '​🌙​' },
-    { id: 'nuvem', nome: 'Nuvem', simbolo: '​​☁️' },
-    { id: 'estrela', nome: 'Estrela', simbolo: '⭐​' },
-    { id: 'coracao', nome: 'Coração', simbolo: '​💗' }
+    { id: 'flor', nome: 'Flor', simbolo: '🌺' },
+    { id: 'lua', nome: 'Lua', simbolo: '🌙' },
+    { id: 'nuvem', nome: 'Nuvem', simbolo: '☁️' },
+    { id: 'estrela', nome: 'Estrela', simbolo: '⭐' },
+    { id: 'coracao', nome: 'Coração', simbolo: '💗' }
 ];
 
 function Perfil() {
@@ -25,10 +25,12 @@ function Perfil() {
     });
 
     const [doacoes, setDoacoes] = useState([]);
+
     const [resumo, setResumo] = useState({
         total_ml: 0,
         total_doacoes: 0
     });
+
     const [doacoesMensais, setDoacoesMensais] = useState([]);
 
     const [quantidadeMl, setQuantidadeMl] = useState('');
@@ -41,18 +43,8 @@ function Perfil() {
     const [mensagem, setMensagem] = useState('');
     const [erro, setErro] = useState('');
 
-    useEffect(() => {
-        const token = localStorage.getItem('@lacos:token');
-
-        if (!token) {
-            navegar('/login');
-            return;
-        }
-
-        carregarDados();
-    }, [navegar]);
-
-    async function carregarDados() {
+    // Carrega os dados do perfil e das doações
+    const carregarDados = useCallback(async () => {
         try {
             setCarregando(true);
             setErro('');
@@ -115,11 +107,25 @@ function Perfil() {
                 erroResposta.response?.data?.mensagem ||
                 'Não foi possível carregar os dados do perfil.'
             );
+
         } finally {
             setCarregando(false);
         }
-    }
+    }, [navegar]);
 
+    // Verifica o login e carrega os dados
+    useEffect(() => {
+        const token = localStorage.getItem('@lacos:token');
+
+        if (!token) {
+            navegar('/login');
+            return;
+        }
+
+        carregarDados();
+    }, [navegar, carregarDados]);
+
+    // Altera os campos dos dados pessoais
     function alterarDados(evento) {
         const { name, value } = evento.target;
 
@@ -129,6 +135,7 @@ function Perfil() {
         }));
     }
 
+    // Salva os dados pessoais
     async function salvarDados(evento) {
         evento.preventDefault();
 
@@ -159,48 +166,49 @@ function Perfil() {
         }
     }
 
-async function escolherAvatar(avatar) {
-    try {
-        setErro('');
-        setMensagem('');
+    // Escolhe e salva o avatar
+    async function escolherAvatar(avatar) {
+        try {
+            setErro('');
+            setMensagem('');
 
-        const resposta = await api.put('/api/doadoras/perfil', {
-            ...dados,
-            avatar
-        });
-
-        setDados((dadosAtuais) => ({
-            ...dadosAtuais,
-            avatar
-        }));
-
-        const doadoraSalva = JSON.parse(
-            localStorage.getItem('@lacos:doadora') || '{}'
-        );
-
-        const doadoraAtualizada =
-            resposta.data.doadora || resposta.data;
-
-        localStorage.setItem(
-            '@lacos:doadora',
-            JSON.stringify({
-                ...doadoraSalva,
-                ...doadoraAtualizada,
+            const resposta = await api.put('/api/doadoras/perfil', {
+                ...dados,
                 avatar
-            })
-        );
+            });
 
-        setMensagem('Avatar atualizado com sucesso.');
+            setDados((dadosAtuais) => ({
+                ...dadosAtuais,
+                avatar
+            }));
 
-    } catch (erroResposta) {
-        setErro(
-            erroResposta.response?.data?.mensagem ||
-            'Não foi possível atualizar o avatar.'
-        );
+            const doadoraSalva = JSON.parse(
+                localStorage.getItem('@lacos:doadora') || '{}'
+            );
+
+            const doadoraAtualizada =
+                resposta.data.doadora || resposta.data;
+
+            localStorage.setItem(
+                '@lacos:doadora',
+                JSON.stringify({
+                    ...doadoraSalva,
+                    ...doadoraAtualizada,
+                    avatar
+                })
+            );
+
+            setMensagem('Avatar atualizado com sucesso.');
+
+        } catch (erroResposta) {
+            setErro(
+                erroResposta.response?.data?.mensagem ||
+                'Não foi possível atualizar o avatar.'
+            );
+        }
     }
-}
 
-
+    // Registra uma nova doação
     async function registrarDoacao(evento) {
         evento.preventDefault();
 
@@ -238,6 +246,7 @@ async function escolherAvatar(avatar) {
         }
     }
 
+    // Formata a data para o padrão brasileiro
     function formatarData(data) {
         if (!data) return 'Data não informada';
 
@@ -250,6 +259,7 @@ async function escolherAvatar(avatar) {
         return `${dia}/${mes}/${ano}`;
     }
 
+    // Formata o mês do resumo mensal
     function formatarMes(mes) {
         if (!mes) return '';
 
